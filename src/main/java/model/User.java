@@ -12,22 +12,22 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int Id;
-	private String Name;
-	private String Email;
-	private String Password;
-	private boolean IsTeamLeader;
+	private String name;
+	private String email;
+	private String password;
+	private boolean isTeamLeader;
 
 	
 	public User() {
     }
 	
-	public User(int Id, String Name, String Email, String Password, boolean IsTeamLeader) {
+	public User(int Id, String name, String email, String password, boolean isTeamLeader) {
 		super();
         this.Id = Id;
-        this.Name = Name;
-        this.Email = Email;
-        this.Password = Password;
-        this.IsTeamLeader = IsTeamLeader;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.isTeamLeader = isTeamLeader;
     }
 	
 	// getters and setters
@@ -36,35 +36,35 @@ public class User {
 	}
 	
 	public String getName() {
-		return Name;
+		return name;
 	}
 	
 	public String getEmail() {
-		return Email;
+		return email;
 	}
 	
 	public String getPassword() {
-		return Password;
+		return password;
 	}
 	
 	public boolean getIsTeamLeader() {
-		return IsTeamLeader;
+		return isTeamLeader;
 	}
 	
 	public void setName(String name) {
-		this.Name = name;
+		this.name = name;
 	}
 	
 	public void setEmail(String email) {
-		this.Email = email;
+		this.email = email;
 	}
 	
 	public void setPassword(String password) {
-		this.Password = password;
+		this.password = password;
 	}
 	
-	public void setIsTeamLeader(boolean IsTeamLeader) {
-		this.IsTeamLeader = IsTeamLeader;
+	public void setIsTeamLeader(boolean isTeamLeader) {
+		this.isTeamLeader = isTeamLeader;
 	}
 	
 	
