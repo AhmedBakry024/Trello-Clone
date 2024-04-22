@@ -35,7 +35,7 @@ public class BoardService {
         return "test board from board service";
     }
 
-    // to do 
+    // done
     //delete a board 
     @DELETE
     @Path("deleteBoard")
