@@ -1,4 +1,4 @@
-package Project;
+package serivce;
 
 public class BoardDTO {
     public int getId() {
