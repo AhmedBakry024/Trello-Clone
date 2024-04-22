@@ -1,5 +1,6 @@
 package service;
 
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -97,11 +98,21 @@ public class UserServices {
 		return Response.status(200).entity("Test successful").build();
 	}
 	
-	@GET
-	@Path("/getall")
-	public Response getAll() {
-		return Response.status(200).entity(em.createQuery("SELECT u FROM User u").getResultList()).build();
-	}
+	 // updated 
+    // error when creating a new board to a user 
+    @GET
+    @Path("/getall")
+    public Response getAllUsers() {
+    	 try {
+    	        List<User> users = em.createQuery("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userBoards", User.class)
+    	                              .getResultList();
+    	        return Response.status(200).entity(users).build();
+    	    } catch (Exception e) {
+    	        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+    	                       .entity("Error occurred while fetching users: " + e.getMessage())
+    	                       .build();
+    	    }
+    }
 	
 	
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
