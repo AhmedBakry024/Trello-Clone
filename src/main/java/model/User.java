@@ -5,31 +5,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.JoinColumn;
 
 @Entity
-@Table(
-    name = "User"
-)
+@Table(name = "User")
 public class User {
     @Id
-    @GeneratedValue(
-        strategy = GenerationType.IDENTITY
-    )
-    private int Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String name;
     private String email;
     private String password;
@@ -39,7 +28,7 @@ public class User {
     }
 
     public User(int Id, String name, String email, String password, boolean isTeamLeader) {
-        this.Id = Id;
+        this.id = Id;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -47,7 +36,7 @@ public class User {
     }
 
     public int getId() {
-        return this.Id;
+        return this.id;
     }
 
     public String getName() {
@@ -82,7 +71,8 @@ public class User {
         this.isTeamLeader = isTeamLeader;
     }
     
-    @OneToMany(mappedBy="user", fetch = FetchType.LAZY)	
+    @OneToMany(mappedBy="user")	
+    @JsonIgnore
     private Set<Board> userBoards;
 
 
@@ -92,7 +82,7 @@ public class User {
 	}
 
 	public void setId(int id) {
-		Id = id;
+		this.id = id;
 	}
 
 	public void setTeamLeader(boolean isTeamLeader) {
@@ -100,7 +90,7 @@ public class User {
 	}
 	 public Set<Board> getUserBoards() {
 	        if (this.userBoards == null) {
-	            this.userBoards = new HashSet<>(); 
+	            this.userBoards = new HashSet<Board>(); 
 	        }
 	        return userBoards;
 	    }

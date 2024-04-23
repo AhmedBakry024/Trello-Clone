@@ -1,9 +1,9 @@
 package model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.*;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Board")
@@ -17,7 +17,7 @@ public class Board {
     private String name;
 
 
-    private String  teamLeader;
+    private String teamLeader;
 
     
     public Board() {
@@ -56,6 +56,7 @@ public class Board {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id") 
+    @JsonIgnore
     private User user;
 
    
