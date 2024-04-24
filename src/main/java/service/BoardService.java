@@ -38,7 +38,7 @@ public class BoardService {
     }
 
     
-    
+    // - --
     //----------------------------------------------------------------
     // 2.a. - Users can create a new board with a unique name.
     // done  
