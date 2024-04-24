@@ -13,15 +13,15 @@ public class BoardDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getTeamLeader() {
+	public int getTeamLeader() {
 		return teamLeader;
 	}
-	public void setTeamLeader(String teamLeader) {
-		this.teamLeader = teamLeader;
+	public void setTeamLeader(int i) {
+		this.teamLeader = i;
 	}
 	private int id;
     private String name;
-    private String teamLeader;
+    private int teamLeader;
 
     // Getters and setters
 }

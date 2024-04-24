@@ -1,5 +1,10 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.*;
 
 
@@ -17,13 +22,13 @@ public class Board {
     private String name;
 
 
-    private String teamLeader;
+    private int teamLeader;
 
     
     public Board() {
     }
 
-    public Board(String name, String  teamLeader) {
+    public Board(String name, int  teamLeader) {
         this.name = name;
         this.teamLeader = teamLeader;
     }
@@ -46,15 +51,42 @@ public class Board {
         this.name = name;
     }
 
-    public String getTeamLeader() {
+    public int getTeamLeader() {
         return teamLeader;
     }
 
-    public void setTeamLeader(String teamLeader) {
+    public void setTeamLeader(int teamLeader) {
         this.teamLeader = teamLeader;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    
+    
+    
+    @Column
+    @ElementCollection(targetClass=Integer.class , fetch = FetchType.EAGER)
+    private List<Integer> invitedID = new ArrayList<>();
+
+
+	public List<Integer> getInvitedID() {
+		
+		
+		
+		 if (this.invitedID == null) {
+	            this.invitedID =  new ArrayList<>();
+	        }
+	        return invitedID;
+		
+	
+	}
+
+	public void setInvitedID(List<Integer> invitedID) {
+		this.invitedID = invitedID;
+	}
+
+
+
+
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id") 
     @JsonIgnore
     private User user;
@@ -68,6 +100,19 @@ public class Board {
 		this.user = user;
 	}
     
-    
-    
+	    @ManyToMany
+	    @JoinTable(
+	            name = "Board_User",
+	            joinColumns = @JoinColumn(name = "board_id"),
+	            inverseJoinColumns = @JoinColumn(name = "user_id")
+	    )
+	    @JsonIgnore
+	    private Set<User> invitedUsers = new HashSet<>();
+	
+	
+
+
+	 
+	 
+	
 }

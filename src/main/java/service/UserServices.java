@@ -37,7 +37,7 @@ public class UserServices {
 		} catch (Exception e) {
 		    userFromDb = null;
 		}
-//		 check if email is valid
+        // check if email is valid
 		if (!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).matches()) {
 			return Response.status(400).entity("Invalid email").build();
 		}
