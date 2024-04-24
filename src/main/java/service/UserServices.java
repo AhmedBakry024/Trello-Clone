@@ -6,9 +6,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -26,8 +23,7 @@ public class UserServices {
 	@PersistenceContext(unitName = "database")
 	private EntityManager em;
 
-	@POST
-	@Path("/create")
+	
 	public Response createUser(User user) {
 		User userFromDb;
 		
@@ -53,20 +49,20 @@ public class UserServices {
 		return Response.status(201).entity("User created successfully").build();
 	}
 
-	@PUT
-	@Path("/login")
+	
 	public Response loginUser(User user) {
 		
         User userFromDb;
+        
+		// check if email is valid
+        if (!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).matches()) {
+            return Response.status(400).entity("Invalid email").build();
+        }
         try {
             userFromDb = (User) em.createQuery("SELECT u FROM User u WHERE u.email = :email")
                     .setParameter("email", user.getEmail()).getSingleResult();
         } catch (Exception e) {
             userFromDb = null;
-        }
-		// check if email is valid
-        if (!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).matches()) {
-            return Response.status(400).entity("Invalid email").build();
         }
 		
 		// use create query not find because find is used for primary key
@@ -83,25 +79,6 @@ public class UserServices {
 	}
 	
 	
-	@PUT
-	@Path("/update")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateUser(User user) {
-//		userServices.updateUser(user);
-		return Response.status(200).entity("User updated successfully").build();
-	}
-	
-	@GET
-	@Path("/test")
-	public Response test() {
-		return Response.status(200).entity("Test successful").build();
-	}
-	
-	 // updated 
-    // error when creating a new board to a user 
-    @GET
-    @Path("/getall")
     public Response getAllUsers() {
     	 try {
     	        List<User> users = em.createQuery("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.userBoards", User.class)
@@ -113,6 +90,39 @@ public class UserServices {
     	                       .build();
     	    }
     }
+	
+    
+	public Response editName(int id, String name) {
+		User user = em.find(User.class, id);
+		if (user == null) {
+			return Response.status(400).entity("User doesn't exist").build();
+		}
+		user.setName(name);
+		em.merge(user);
+		return Response.status(200).entity("Name updated successfully").build();
+	}
+	
+	
+	public Response editEmail(int id, String email) {
+		User user = em.find(User.class, id);
+		if (user == null) {
+			return Response.status(400).entity("User doesn't exist").build();
+		}
+		user.setEmail(email);
+		em.merge(user);
+		return Response.status(200).entity("Email updated successfully").build();
+	}
+	
+	
+	public Response editPassword(int id, String password) {
+		User user = em.find(User.class, id);
+		if (user == null) {
+			return Response.status(400).entity("User doesn't exist").build();
+		}
+		user.setPassword(password);
+		em.merge(user);
+		return Response.status(200).entity("Password updated successfully").build();
+	}
 	
 	
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
