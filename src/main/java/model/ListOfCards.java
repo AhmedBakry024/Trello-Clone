@@ -3,12 +3,15 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "list")
@@ -18,17 +21,10 @@ public class ListOfCards {
 	private int listId;
 	private String listName;
 	
-	@OneToMany(mappedBy = "listId")
+	@OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
 	private List<Card> cards = new ArrayList<>();
-	
-	public List<Integer> getCardIds(){
-		List<Integer> cardIds = new ArrayList<>();
-		for(Card card : cards) {
-			cardIds.add(card.getCardId());
-		}
-		return cardIds;
-	}
-	
+
 	public ListOfCards() {};
 	
 	public ListOfCards(String listName) {
@@ -36,8 +32,10 @@ public class ListOfCards {
 	}
 	
 	public void addCard(Card card) {
-		cards.add(card);
-		card.setListId(this);
+		if(card !=null) {
+			cards.add(card);
+			card.setList(this);
+		}
 	}
 	
 	public void removeCard(Card card) {
@@ -56,15 +54,8 @@ public class ListOfCards {
 		return listId;
 	}
 
-	public void setListId(int listId) {
-		this.listId = listId;
-	}
 	public List<Card> getCards() {
 		return cards;
 	}
 
-	public void setCards(List<Card> Cards) {
-		this.cards = Cards;
-	}
-	
 }

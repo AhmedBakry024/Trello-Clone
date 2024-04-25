@@ -44,8 +44,12 @@ public class ListServices {
 		if(listOfCards == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
 		else {
-			em.remove(listOfCards);
-			return  Response.status(Response.Status.OK).build();
+			for (Card card : listOfCards.getCards()) {
+				listOfCards.removeCard(card);
+	            em.remove(card);
+	        }
+	        em.remove(listOfCards);
+	        return Response.status(Response.Status.OK).entity("List deleted successfully").build();
 		}
 	}
 	
@@ -56,9 +60,23 @@ public class ListServices {
         if (list == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } else {
-            return Response.ok(list.getCardIds()).build();
+            return Response.ok(list.getCards()).build();
         }
     }
 	
+	@POST
+	@Path("/addcardtolist/{listId}/{cardId}")
+	public Response addCardToList(@PathParam("listId")int listId,@PathParam("cardId")int cardId) {
+		ListOfCards list = em.find(ListOfCards.class, listId);
+		if(list == null)
+			return Response.status(Response.Status.NOT_FOUND).build();
+		else {
+			Card card = em.find(Card.class, cardId);
+			if(card == null)
+				return Response.status(Response.Status.NOT_FOUND).build();
+			list.addCard(card);
+			return Response.status(Response.Status.OK).entity(card).build();
+		}
+	}
 
 }
