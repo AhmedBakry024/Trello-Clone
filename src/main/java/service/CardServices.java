@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 
 import model.Card;
+import model.User;
 
 @Stateless
 @Path("/card")
@@ -39,12 +39,12 @@ public class CardServices {
 	
 	@POST
 	@Path("/{cardId}/description")
-	public Response addDescription(@PathParam("cardId")int cardId,String descrption) {
+	public Response addDescription(@PathParam("cardId")int cardId,String description) {
 		Card card = em.find(Card.class, cardId);
 		if(card == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
 		else {
-			card.setDescription(descrption);
+			card.setDescription(description);
 			em.merge(card);
 			return Response.status(Response.Status.OK).entity("Description added successfully. ").build();
 		}
@@ -67,12 +67,15 @@ public class CardServices {
 	// assigned to anyone by the CardID
 	@POST
     @Path("/{cardId}/assignedTo/{assignedTo}")
-	public Response assignedTo(@PathParam("cardId")int cardId,@PathParam("assignedTo") int assignedTo){
+	public Response assignedTo(@PathParam("cardId")int cardId,@PathParam("assignedTo") int Id){
 		Card card = em.find(Card.class, cardId);
 		if(card == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
 		else {
-			card.setAssignedTo(assignedTo);
+			User user = em.find(User.class, Id);
+			if(user == null)
+				return Response.status(Response.Status.NOT_FOUND).entity("User Not Found").build();
+			card.setAssignedTo(Id);
 			em.merge(card);
 			return Response.status(Response.Status.OK).build();
 		}
@@ -101,17 +104,4 @@ public class CardServices {
         }
 	}
 	
-	@DELETE
-	@Path("/{cardId}/remove")
-	public Response removeCardFromList(@PathParam("cardId") int cardId) {
-	    Card card = em.find(Card.class, cardId);
-	    if (card == null) {
-	        return Response.status(Response.Status.NOT_FOUND).build();
-	    } else {
-	        card.getListId().removeCard(card);
-	        return Response.status(Response.Status.OK).build();
-	    }
-	}
-	
 }
-

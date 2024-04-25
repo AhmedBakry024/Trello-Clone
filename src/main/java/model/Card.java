@@ -24,7 +24,6 @@ public class Card {
 	private int cardId;
 	private String title;
 	private String description;
-	private int listID;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> comments = new ArrayList<>();
@@ -34,33 +33,25 @@ public class Card {
 	@ManyToOne
 	@JoinColumn(name ="list_id")
 	@JsonIgnore
-	private ListOfCards listId;
+	private ListOfCards list;
 	
 	public Card() {};
 	
-	public Card(int CardId,String Title,String description,int assignedTo) {
-		this.cardId = CardId;
+	public Card(String Title,String description) {
 		this.title = Title;
 		this.description = description;
-		listId.addCard(this);
-		listID = listId.getListId();
 	}
 	
-	public void setListId(ListOfCards listId) {
-		listId.setListId(listID);
-		this.listId = listId;
+	public void setList(ListOfCards list) {
+		this.list = list;
 	}
 	
-	public ListOfCards getListId() {
-		return listId !=null ? listId : null;
+	public ListOfCards getList() {
+		return list !=null ? list : null;
 	}
 	
 	public int getCardId() {
 		return cardId;
-	}
-
-	public void setCardId(int cardId) {
-		this.cardId = cardId;
 	}
 
 	public String getTitle() {
@@ -84,7 +75,9 @@ public class Card {
 	}
 
 	public void addComment(String Comment) {
-		comments.add(Comment);
+		if(Comment != null && !Comment.trim().isEmpty()) {
+			this.comments.add(Comment);
+		}
 	}
 
 	public int getAssignedTo() {
