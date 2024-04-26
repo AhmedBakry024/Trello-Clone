@@ -1,6 +1,3 @@
-/ejb/
-/service/
 /model/
-/META-INF/
 /controller/
-/Services.class
+/service/

@@ -23,16 +23,13 @@ import model.User;
 import javax.ws.rs.*;
 
 @Stateless
-@Path("/board")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+
 public class BoardService {
 
     @PersistenceContext(unitName = "database")
     private EntityManager entityManager;
 
-    @GET
-    @Path("/test")
+ 
     public String test() {
         return "test board from board service";
     }
@@ -45,10 +42,8 @@ public class BoardService {
     // create a new board
     //----------------------------------------------------------------
 
-    @POST
-    @Path("createBoard/{userId}")
     
-    public Response createBoard(@PathParam("userId") int userId, Board board) {
+    public Response createBoard(int userId, Board board) {
         try {
         	
             User user = entityManager.find(User.class, userId);
@@ -89,9 +84,8 @@ public class BoardService {
     // get all boards that a user has access to it by passing the user ID 
     //---------------------------------------------------------------- 
 
-    @GET
-    @Path("/getBoardsByUserId/{userId}")
-    public List<Board> getBoardsByUserId(@PathParam("userId") int userId) {
+   
+    public List<Board> getBoardsByUserId(int userId) {
         try {
             // Find the user by ID
             User user = entityManager.find(User.class, userId);
@@ -127,11 +121,7 @@ public class BoardService {
     
     
     
-    @POST
-    @Path("/addUserToInvitedList")
-    public Response addUserToInvitedList(
-            @QueryParam("userId") int userId,
-            @QueryParam("boardId") int boardId) {
+    public Response addUserToInvitedList(int userId, int boardId) {
         try {
             // Find the Board entity by ID
             Board board = entityManager.find(Board.class, boardId);
@@ -164,9 +154,7 @@ public class BoardService {
 
     
     // return the list of IDs of the invited users 
-    @GET
-    @Path("/invitedUsers")
-    public Response getInvitedUsersForBoard(@QueryParam("boardId") int boardId) {
+    public Response getInvitedUsersForBoard(int boardId) {
         try {
             // Find the Board entity by ID
             Board board = entityManager.find(Board.class, boardId);
@@ -192,101 +180,9 @@ public class BoardService {
                     .build();
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-//    @POST
-//    @Path("addUserToBoard")
-//    public Response addUserToBoard(
-//            @QueryParam("userId") int userId,
-//            @QueryParam("boardId") int boardId) {
-//
-//        try {
-//            // Find the User entity by ID
-//            User user = entityManager.find(User.class, userId);
-//            if (user == null) {
-//                return Response.status(Response.Status.NOT_FOUND)
-//                        .entity("User with ID " + userId + " not found.")
-//                        .build();
-//            }
-//
-//            // Find the Board entity by ID
-//            Board board = entityManager.find(Board.class, boardId);
-//            if (board == null) {
-//                return Response.status(Response.Status.NOT_FOUND)
-//                        .entity("Board with ID " + boardId + " not found.")
-//                        .build();
-//            }
-//
-//            // Add board to user's list of boards
-//            user.getUserBoards().add(board);
-//
-//            // Add user to board's list of invited users
-//          //  board.getInvitedBoards().add(user);
-//            board.getInvitedUsersId().add(user.getId());
-//            
-//            entityManager.merge(user);
-//            entityManager.merge(board);
-//
-//            return Response.status(Response.Status.OK)
-//                    .entity("User with ID " + userId + " added to Board with ID " + boardId)
-//                    .build();
-//
-//        } catch (Exception e) {
-//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                    .entity("Error adding user to board: " + e.getMessage())
-//                    .build();
-//        }
-//    }
-////    
-////    
-////  @GET
-//    @Path("/invitedUsers")
-//    public Response getInvitedUsersForBoard(@QueryParam("boardId") int boardId) {
-//        try {
-//            // Find the Board entity by ID
-//            Board board = entityManager.find(Board.class, boardId);
-//            if (board == null) {
-//                return Response.status(Response.Status.NOT_FOUND)
-//                        .entity("Board with ID " + boardId + " not found.")
-//                        .build();
-//            }
-//
-//            // Get the set of invited users from the board entity
-//            List invitedUsers = board.getInvitedUsersId();
-//
-//            return Response.status(Response.Status.OK)
-//                    .entity(invitedUsers)
-//                    .build();
-//
-//        } catch (Exception e) {
-//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                    .entity("Error fetching invited users for board: " + e.getMessage())
-//                    .build();
-//        }
-//    }
-    
-    
-    
-    
-    
-    
+
+
+  
     
     //---------------------------------------------------------------- 
     // 2.d. - Users can delete a board they created
@@ -294,34 +190,29 @@ public class BoardService {
     //delete a board 
     //---------------------------------------------------------------- 
 
-    @DELETE
-    @Path("deleteBoard")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String deleteBoard(@QueryParam("name") String name, @QueryParam("teamLeader") int teamLeader) {
+    public String deleteBoard(String name, int teamLeader) {
         try {
-           
-	
+            // Find the board by name
             Board board = entityManager.createQuery("SELECT b FROM Board b WHERE b.name = :name", Board.class)
                                        .setParameter("name", name)
                                        .getSingleResult();
-            
+
             if (board == null) {
                 return "Board with name " + name + " not found";
             }
 
-            
-            if (board.getTeamLeader() != teamLeader ) {
+            // Check if the team leader matches
+            if (board.getTeamLeader() != teamLeader) {
                 return "Only the team leader " + board.getTeamLeader() + " can delete this board";
             }
 
             entityManager.remove(board);
-            return board.getTeamLeader() +" Board " + name + " successfully deleted";
-            
-            
+            return board.getTeamLeader() + " Board " + name + " successfully deleted";
         } catch (Exception e) {
             e.printStackTrace();
             return "Failed to delete board. Status: 403";
         }
     }
+
       
 }
