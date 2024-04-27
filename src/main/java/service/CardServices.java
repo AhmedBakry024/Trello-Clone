@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 
 
 import model.Card;
+import model.ListOfCards;
 import model.User;
 
 @Stateless
@@ -23,6 +24,7 @@ import model.User;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CardServices {
+	
 	@PersistenceContext(unitName = "database")
 	private EntityManager em;
 	
@@ -35,8 +37,22 @@ public class CardServices {
 		return Response.status(Response.Status.CREATED).entity(card).build();
 	}
 	
-	//add description to card by CardId
+	@POST
+	@Path("/addcardtolist/{cardId}/{listId}")
+	public Response addCardToList(@PathParam("cardId")int cardId,@PathParam("listId")int listId) {
+		Card card = em.find(Card.class, cardId);
+		if(card == null)
+			return Response.status(Response.Status.NOT_FOUND).build();
+		else {
+			ListOfCards list = em.find(ListOfCards.class, listId);
+			if(list == null)
+				return Response.status(Response.Status.NOT_FOUND).build();
+			list.addCard(card);
+			return Response.status(Response.Status.OK).entity(card).build();
+		}
+	}
 	
+	//add description to card by CardId
 	@POST
 	@Path("/{cardId}/description")
 	public Response addDescription(@PathParam("cardId")int cardId,String description) {

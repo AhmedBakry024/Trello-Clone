@@ -1,10 +1,9 @@
 package service;
 
-
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.websocket.server.PathParam;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,12 +21,11 @@ import model.ListOfCards;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ListServices {
+	
 	@PersistenceContext(unitName = "database")
 	private EntityManager em;
-	
-	
+
 	//create list
-	
 	@POST
 	@Path("/create")
 	public Response createList(ListOfCards listOfCards) {
@@ -35,8 +33,7 @@ public class ListServices {
 		return Response.status(Response.Status.CREATED).entity(listOfCards).build();
 	}
 	
-	//delete a list by ListId
-	
+	//delete a list by ListId	
 	@DELETE
 	@Path("/deletelist/{listId}")
 	public Response deletelist(@PathParam("listId") int listId) {
@@ -44,14 +41,23 @@ public class ListServices {
 		if(listOfCards == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
 		else {
-			for (Card card : listOfCards.getCards()) {
-				listOfCards.removeCard(card);
-	            em.remove(card);
+			try {
+				for (Card card : listOfCards.getCards()) {
+					if(!em.contains(card)) {
+						card = em.merge(card);
+					}
+					listOfCards.removeCard(card);
+		            em.remove(card);
+		        }
+		        em.remove(listOfCards);
+	            em.flush();
+		        return Response.status(Response.Status.OK).entity("List deleted successfully").build();
+			}catch(Exception e) {
+	        	return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting list").build();
 	        }
-	        em.remove(listOfCards);
-	        return Response.status(Response.Status.OK).entity("List deleted successfully").build();
 		}
 	}
+	
 	
 	@GET
     @Path("/getallcardslist/{listId}")
@@ -64,19 +70,4 @@ public class ListServices {
         }
     }
 	
-	@POST
-	@Path("/addcardtolist/{listId}/{cardId}")
-	public Response addCardToList(@PathParam("listId")int listId,@PathParam("cardId")int cardId) {
-		ListOfCards list = em.find(ListOfCards.class, listId);
-		if(list == null)
-			return Response.status(Response.Status.NOT_FOUND).build();
-		else {
-			Card card = em.find(Card.class, cardId);
-			if(card == null)
-				return Response.status(Response.Status.NOT_FOUND).build();
-			list.addCard(card);
-			return Response.status(Response.Status.OK).entity(card).build();
-		}
-	}
-
 }

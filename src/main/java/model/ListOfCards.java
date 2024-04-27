@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ListOfCards {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int listId;
+	private int id;
 	private String listName;
 	
 	@OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -27,8 +27,10 @@ public class ListOfCards {
 
 	public ListOfCards() {};
 	
-	public ListOfCards(String listName) {
+	public ListOfCards(int id,String listName,List<Card>cards) {
+		this.id = id;
 		this.listName = listName;
+		this.cards = cards;
 	}
 	
 	public void addCard(Card card) {
@@ -51,7 +53,7 @@ public class ListOfCards {
 	}
 
 	public int getListId() {
-		return listId;
+		return id;
 	}
 
 	public List<Card> getCards() {
