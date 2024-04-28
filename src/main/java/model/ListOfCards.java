@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,13 +26,19 @@ public class ListOfCards {
 	@OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<Card> cards = new ArrayList<>();
+	
+	@ManyToOne
+	@JoinColumn(name ="board_id")
+	@JsonIgnore
+	private Board board;
 
 	public ListOfCards() {};
 	
-	public ListOfCards(int id,String listName,List<Card>cards) {
+	public ListOfCards(int id,String listName,List<Card>cards,Board board) {
 		this.id = id;
 		this.listName = listName;
 		this.cards = cards;
+		this.board = board;
 	}
 	
 	public void addCard(Card card) {
@@ -38,6 +46,10 @@ public class ListOfCards {
 			cards.add(card);
 			card.setList(this);
 		}
+	}
+	
+	public void setBoard(Board board) {
+		this.board = board;
 	}
 	
 	public void removeCard(Card card) {

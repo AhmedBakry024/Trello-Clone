@@ -21,9 +21,8 @@ public class Board {
     @Column(unique = true)
     private String name;
 
-
     private int teamLeader;
-
+    
     
     public Board() {
     }
@@ -63,7 +62,7 @@ public class Board {
     
     
     @Column
-    @ElementCollection(targetClass=Integer.class , fetch = FetchType.EAGER)
+    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
     private List<Integer> invitedID = new ArrayList<>();
 
 
@@ -109,9 +108,16 @@ public class Board {
 	    @JsonIgnore
 	    private Set<User> invitedUsers = new HashSet<>();
 	
-	
+	    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+		@JsonIgnore
+	    private List <ListOfCards> listOfCards ;
 
-
+	    public void setList(ListOfCards list) {
+	    	if(list != null) {
+	    		listOfCards.add(list);
+	    		list.setBoard(this);
+	    	}
+	    }
 	 
 	 
 	
