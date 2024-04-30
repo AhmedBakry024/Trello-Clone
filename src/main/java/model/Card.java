@@ -91,4 +91,8 @@ public class Card {
 		this.assignedTo = assignedTo;
 	}
 	
+	public int getListId() {
+		return list.getListId();
+	}
+	
 }

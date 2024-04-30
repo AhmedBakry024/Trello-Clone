@@ -27,18 +27,20 @@ public class ListOfCards {
 	@JsonIgnore
 	private List<Card> cards = new ArrayList<>();
 	
+	int boardId;
+	
 	@ManyToOne
 	@JoinColumn(name ="board_id")
 	@JsonIgnore
 	private Board board;
-
+	
 	public ListOfCards() {};
 	
-	public ListOfCards(int id,String listName,List<Card>cards,Board board) {
+	public ListOfCards(int id,String listName,List<Card>cards,int boardId) {
 		this.id = id;
 		this.listName = listName;
 		this.cards = cards;
-		this.board = board;
+		this.boardId= boardId;
 	}
 	
 	public void addCard(Card card) {
@@ -47,11 +49,7 @@ public class ListOfCards {
 			card.setList(this);
 		}
 	}
-	
-	public void setBoard(Board board) {
-		this.board = board;
-	}
-	
+
 	public void removeCard(Card card) {
 		cards.remove(card);
 	}
@@ -71,5 +69,17 @@ public class ListOfCards {
 	public List<Card> getCards() {
 		return cards;
 	}
-
+	
+	public void setBoard(Board board) {
+		this.board = board;
+	}
+	
+	public int getBoardId() {
+		return boardId;
+	}
+	
+	public Board getBoard() {
+		return board;
+	}
+	
 }

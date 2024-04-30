@@ -33,6 +33,10 @@ public class CardServices {
 	@POST
 	@Path("/create") 
 	public Response createCard(Card card) {
+		User user = em.find(User.class, card.getAssignedTo());
+		if(user == null) {
+			return Response.status(Response.Status.NOT_FOUND).entity("User not Found").build();
+		}
 		em.persist(card);
 		return Response.status(Response.Status.CREATED).entity(card).build();
 	}
@@ -99,7 +103,7 @@ public class CardServices {
 	
 	@GET
     @Path("/getallcomment/{cardId}")
-    public Response getAllCardsInList(@PathParam("cardId") int cardId) {
+    public Response getAllComments(@PathParam("cardId") int cardId) {
         Card list = em.find(Card.class, cardId);
         if (list == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
