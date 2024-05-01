@@ -25,6 +25,7 @@ public class Card {
 	private String title;
 	private String description;
 	
+	
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> comments = new ArrayList<>();
 	
