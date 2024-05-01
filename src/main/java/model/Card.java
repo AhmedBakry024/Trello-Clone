@@ -38,9 +38,12 @@ public class Card {
 	
 	public Card() {};
 	
-	public Card(String Title,String description) {
+	public Card(int cardId,String Title,String description,int assignedTo,ListOfCards list) {
+		this.cardId = cardId;
 		this.title = Title;
 		this.description = description;
+		this.assignedTo = assignedTo;
+		this.list = list;
 	}
 	
 	public void setList(ListOfCards list) {
@@ -87,6 +90,10 @@ public class Card {
 
 	public void setAssignedTo(int assignedTo) {
 		this.assignedTo = assignedTo;
+	}
+	
+	public int getListId() {
+		return list.getListId();
 	}
 	
 }

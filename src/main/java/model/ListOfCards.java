@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -18,17 +20,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ListOfCards {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int listId;
+	private int id;
 	private String listName;
 	
 	@OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<Card> cards = new ArrayList<>();
-
+	
+	int boardId;
+	
+	@ManyToOne
+	@JoinColumn(name ="board_id")
+	@JsonIgnore
+	private Board board;
+	
 	public ListOfCards() {};
 	
-	public ListOfCards(String listName) {
+	public ListOfCards(int id,String listName,List<Card>cards,int boardId) {
+		this.id = id;
 		this.listName = listName;
+		this.cards = cards;
+		this.boardId= boardId;
 	}
 	
 	public void addCard(Card card) {
@@ -37,7 +49,7 @@ public class ListOfCards {
 			card.setList(this);
 		}
 	}
-	
+
 	public void removeCard(Card card) {
 		cards.remove(card);
 	}
@@ -51,11 +63,23 @@ public class ListOfCards {
 	}
 
 	public int getListId() {
-		return listId;
+		return id;
 	}
 
 	public List<Card> getCards() {
 		return cards;
 	}
-
+	
+	public void setBoard(Board board) {
+		this.board = board;
+	}
+	
+	public int getBoardId() {
+		return boardId;
+	}
+	
+	public Board getBoard() {
+		return board;
+	}
+	
 }
