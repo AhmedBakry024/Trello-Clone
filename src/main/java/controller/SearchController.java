@@ -1,7 +1,10 @@
 package controller;
 
+
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -12,14 +15,23 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Card;
-import service.searchService;
+
+import service.*;
+
 
 @Stateless
-@Path("/Search")
+@Path("/search")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class Search {
-	
+public class SearchController{
+
+	@GET
+    @Path("/get")
+    public Response getExample() {
+        int id = 123;
+        return Response.ok(id).build();
+    }
+    
 	
     //---------------------------------------------------------------
 	// Search by a card title in The DB
@@ -84,10 +96,9 @@ public class Search {
 	//---------------------------------------------------------------
 	@GET
 	@Path("/creationDate/{creationDate}")
-    public Response searchByCreationDate(@PathParam("creationDate") java.util.Date creationDate) {
-		
-        List<Card> filteredCards = searchService.searchCardsByCreationDate(creationDate);
-        return Response.ok().entity(filteredCards).build();
-    }
+	public Response searchByCreationDate(@PathParam("creationDate") Date creationDate) {
+	    List<Card> filteredCards = searchService.searchCardsByCreationDate(creationDate);
+	    return Response.ok(filteredCards).build();
+	}
 	
 }

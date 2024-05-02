@@ -2,6 +2,7 @@ package service;
 
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.Stateless;
@@ -9,6 +10,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.core.Response.Status;
+
 import model.Card;
 
 
@@ -63,14 +66,15 @@ public class searchService {
 	// expect one keyword  ( ToDo - Doing - Test - Done )
 	//----------------------------------------------------------
 	public static List<Card> searchCardsByStatus(String keywords) {
-        // Construct JPQL query to search for cards with status containing any of the keywords
-        String jpql = "SELECT c FROM Card c WHERE c.status LIKE :keywords";
+        // Construct JPQL query to search for cards with status matching the specified keyword
+        String jpql = "SELECT c FROM Card c WHERE c.status = :status";
         
         // Create TypedQuery with the JPQL query
         TypedQuery<Card> query = em.createQuery(jpql, Card.class);
         
         // Set the parameter
-        query.setParameter("keywords", "%" + keywords + "%");
+        // Assuming keywords contain a single status value
+        query.setParameter("status", Status.valueOf(keywords.toUpperCase()));
 
         // Execute the query and return the result
         return query.getResultList();
@@ -115,15 +119,15 @@ public class searchService {
 	
 	
 	
-	public static List<Card> searchCardsByCreationDate(java.util.Date creationDate) {
+	public static List<Card> searchCardsByCreationDate(Date creationDate) {
         // Construct JPQL query to search for cards with creationDate matching the specified date
         String jpql = "SELECT c FROM Card c WHERE c.creationDate = :creationDate";
-        
+
         // Create TypedQuery with the JPQL query
         TypedQuery<Card> query = em.createQuery(jpql, Card.class);
-        
+
         // Set the parameter
-        query.setParameter("creationDate", creationDate, TemporalType.DATE);
+        query.setParameter("creationDate", creationDate, TemporalType.TIMESTAMP);
 
         // Execute the query and return the result
         return query.getResultList();

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.ElementCollection;
@@ -12,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,24 +22,39 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "card")
 public class Card {
+	enum Status {
+	    TO_DO,
+	    IN_PROGRESS,
+	    TEST,
+	    DONE
+	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int cardId;
 	private String title;
 	private String description;
+	private Status status = Status.TO_DO;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> comments = new ArrayList<>();
 	
 	private int assignedTo;
+	private int reporterId;
+	
 	
 	@ManyToOne
 	@JoinColumn(name ="list_id")
 	@JsonIgnore
 	private ListOfCards list;
+
 	
-	public Card() {};
+	public Card(int reporterId) {
+		this.reporterId = reporterId;
+		this.creationDate = new Date();
+	};
 	
 	public Card(int cardId,String Title,String description,int assignedTo,ListOfCards list) {
 		this.cardId = cardId;
@@ -44,6 +62,7 @@ public class Card {
 		this.description = description;
 		this.assignedTo = assignedTo;
 		this.list = list;
+		this.creationDate = new Date();
 	}
 	
 	public void setList(ListOfCards list) {
@@ -92,8 +111,25 @@ public class Card {
 		this.assignedTo = assignedTo;
 	}
 	
+	public int getreporterId() {
+		return reporterId;
+	}
+
+	
 	public int getListId() {
 		return list.getListId();
 	}
+	
+	public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+    
+    public Date getCreationDate() {
+        return creationDate;
+    }
 	
 }

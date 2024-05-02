@@ -34,7 +34,7 @@ public class CardServices {
 	@POST
 	@Path("/create") 
 	public Response createCard(Card card) {
-		User user = em.find(User.class, card.getAssignedTo());
+		User user = em.find(User.class, card.getreporterId());
 		if(user == null) {
 			return Response.status(Response.Status.NOT_FOUND).entity("User not Found").build();
 		}
