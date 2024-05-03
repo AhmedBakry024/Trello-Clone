@@ -100,5 +100,20 @@ public class ListServices {
             return Response.ok(list.getCards()).build();
         }
     }
+
+	// get all lists created 
+	@GET
+    @Path("/getAll")
+    public Response getAllLists() {
+        try {
+            List<ListOfCards> lists = em.createQuery("SELECT l FROM ListOfCards l", ListOfCards.class)
+                                        .getResultList();
+            return Response.ok(lists).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Error fetching lists: " + e.getMessage())
+                           .build();
+        }
+    }
 	
 }
