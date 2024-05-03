@@ -37,9 +37,11 @@ public class Card {
 	
 	public Card() {};
 	
-	public Card(String Title,String description) {
+	public Card(int cardId,String Title,String description,int assignedTo) {
+		this.cardId = cardId;
 		this.title = Title;
 		this.description = description;
+		this.assignedTo = assignedTo;
 	}
 	
 	public void setList(ListOfCards list) {
@@ -86,6 +88,21 @@ public class Card {
 
 	public void setAssignedTo(int assignedTo) {
 		this.assignedTo = assignedTo;
+	}
+	
+	public int getListId() {
+		if(list == null)
+			return 0;
+		return list.getListId();
+	}
+	@ManyToOne
+    private sprint sprint;
+	public sprint getSprint() {
+		return sprint;
+	}
+
+	public void setSprint(sprint sprint) {
+		this.sprint = sprint;
 	}
 	
 }

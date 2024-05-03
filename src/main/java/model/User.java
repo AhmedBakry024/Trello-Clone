@@ -28,7 +28,6 @@ public class User {
 
     public User() {
     }
-
     public User(int Id, String name, String email, String password, boolean isTeamLeader) {
         this.id = Id;
         this.name = name;
