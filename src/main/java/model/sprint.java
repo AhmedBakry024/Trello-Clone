@@ -28,6 +28,8 @@ public class sprint {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private int id;
 	 
+		
+		@JsonIgnore
 		private int sprintId ; 
 		
 		   public int getSprintId() {
@@ -43,8 +45,6 @@ public class sprint {
 			this.id = id;
 		}
 		public sprint() {
-			
-			
 		    }
 		   public sprint(int id) {
 			   sprintId = id ; 
@@ -75,12 +75,11 @@ public class sprint {
 			        }
 			        return cardsID;
 			}
-//
+
 			public void setCardId(List<Integer> invitedID) {
 				this.cardsID = invitedID;
 			}
-//			
-//			
+		
 			 public void addToCardid(int cardId) {
 			        this.cardsID.add(cardId);
 			    }

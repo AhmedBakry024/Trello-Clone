@@ -46,7 +46,7 @@ public class SprintController {
 	 @GET
 	 @Path("/test")
 	  public String test() {
-	    return "test srpitn";
+	    return "test sprint";
 	 }
 
 	    // working 
@@ -56,4 +56,12 @@ public class SprintController {
 		 return sprintService.getSprintById(sprintId);
  
 	 }
+	    
+	    // working
+	    @GET
+	    @Path("/cardCount")
+	    public Response getCardCountInSprintLists(@QueryParam("id") int sprintId) {
+	    	 return sprintService.getCardCountInSprintLists(sprintId);
+	    }
+	    
 }
