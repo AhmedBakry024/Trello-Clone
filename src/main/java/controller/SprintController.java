@@ -23,8 +23,6 @@ import service.SprintService;
 @Produces(MediaType.APPLICATION_JSON)
 public class SprintController {
 
-	
-	
 	@EJB
     private SprintService sprintService;
 

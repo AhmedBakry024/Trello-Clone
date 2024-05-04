@@ -36,7 +36,10 @@ public class ListOfCards {
 	private Board board;
 	
 	public ListOfCards() {};
-	
+	public ListOfCards(String listName, int boardId) {
+	    this.listName = listName;
+	    this.boardId = boardId;
+	}
 	public ListOfCards(int id,String listName,List<Card>cards,int boardId) {
 		this.id = id;
 		this.listName = listName;
