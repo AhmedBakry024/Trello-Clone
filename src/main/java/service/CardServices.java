@@ -5,13 +5,8 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+
+
 import javax.ws.rs.core.Response;
 
 
@@ -20,9 +15,6 @@ import model.ListOfCards;
 import model.User;
 
 @Stateless
-@Path("/card")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class CardServices {
 	
 	@PersistenceContext(unitName = "database")
@@ -30,8 +22,6 @@ public class CardServices {
 	
 	
 	// create card
-	@POST
-	@Path("/create") 
 	public Response createCard(Card card) {
 		User user = em.find(User.class, card.getAssignedTo());
 		if(user == null) {
@@ -41,9 +31,9 @@ public class CardServices {
 		return Response.status(Response.Status.CREATED).entity(card).build();
 	}
 	
-	@POST
-	@Path("/addcardtolist/{cardId}/{listId}")
-	public Response addCardToList(@PathParam("cardId")int cardId,@PathParam("listId")int listId) {
+	
+	public Response addCardToList(int cardId,int listId) {
+		
 		Card card = em.find(Card.class, cardId);
 		if(card == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
@@ -56,10 +46,8 @@ public class CardServices {
 		}
 	}
 	
-	//add description to card by CardId
-	@POST
-	@Path("/{cardId}/description")
-	public Response addDescription(@PathParam("cardId")int cardId,String description) {
+
+	public Response addDescription(int cardId,String description) {
 		Card card = em.find(Card.class, cardId);
 		if(card == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
@@ -70,10 +58,8 @@ public class CardServices {
 		}
 	}
 	
-	// add comment to card by CardId
-	@POST
-    @Path("/{cardId}/comment")
-	public Response addComment(@PathParam("cardId")int cardId,String comment){
+
+	public Response addComment(int cardId,String comment){
 		Card card = em.find(Card.class, cardId);
 		if(card == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
@@ -84,14 +70,16 @@ public class CardServices {
 		}
 	}
 	
-	// assigned to anyone by the CardID
-	@POST
-    @Path("/{cardId}/assignedTo/{assignedTo}")
-	public Response assignedTo(@PathParam("cardId")int cardId,@PathParam("assignedTo") int Id){
+
+	public Response assignedTo(int cardId, int Id){
 		Card card = em.find(Card.class, cardId);
 		if(card == null)
 			return Response.status(Response.Status.NOT_FOUND).build();
 		else {
+			if(card.getList() == null || card.getList().getBoard() == null)
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("card are not in list or the list are not in board please check again").build();
+			if(!card.getList().getBoard().getInvitedID().contains(Id))
+				return Response.status(Response.Status.NOT_FOUND).entity("User are not in the board").build();
 			User user = em.find(User.class, Id);
 			if(user == null)
 				return Response.status(Response.Status.NOT_FOUND).entity("User Not Found").build();
@@ -101,9 +89,7 @@ public class CardServices {
 		}
 	}	
 	
-	@GET
-    @Path("/getallcomment/{cardId}")
-    public Response getAllComments(@PathParam("cardId") int cardId) {
+    public Response getAllComments(int cardId) {
         Card list = em.find(Card.class, cardId);
         if (list == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -113,9 +99,8 @@ public class CardServices {
         }
     }
 	
-	@GET
-	@Path("/getcard/{cardId}")
-	public Response getCard(@PathParam("cardId")int cardId) {
+
+	public Response getCard(int cardId) {
 		Card card = em.find(Card.class, cardId);
         if (card == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
