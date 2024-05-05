@@ -2,7 +2,6 @@ package controller;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;

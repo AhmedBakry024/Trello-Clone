@@ -1,7 +1,7 @@
 package service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -26,7 +26,6 @@ public class BoardService {
     }
 
     
-    // - --
     //----------------------------------------------------------------
     // 2.a. - Users can create a new board with a unique name.
     // done  
@@ -100,7 +99,7 @@ public class BoardService {
     }
     
     
-    // need to be fixed 
+   
     //---------------------------------------------------------------- 
     // done 
     // 2.b. - Users can view all boards they have access to.
@@ -136,9 +135,9 @@ public class BoardService {
     
     
     //---------------------------------------------------------------- 
+    // done
     // 2.c. - Users can invite other users to collaborate on a board.
     // 
-    //  
     //---------------------------------------------------------------- 
     
     
@@ -207,10 +206,10 @@ public class BoardService {
 
   
     
-    //---------------------------------------------------------------- 
-    // 2.d. - Users can delete a board they created
-    // done 
-    //delete a board 
+    //----------------------------------------------------------------
+    // done
+    // 2.d. - Users can delete a board they created 
+    // delete a board 
     //---------------------------------------------------------------- 
 
     public Response deleteBoard(String name, int teamLeader) {
