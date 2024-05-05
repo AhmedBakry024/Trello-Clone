@@ -7,7 +7,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -45,21 +47,20 @@ public class UserController {
 
 	  @PUT
 	  @Path("/editName/{id}")
-	  public Response editName(int id, String name) {
+	  public Response editName(@PathParam("id") int id,@QueryParam("name") String name) {
             return userService.editName(id, name);
         }
 	  
 	  @PUT
 	  @Path("/editEmail/{id}")
-	  public Response editEmail(int id, String email) {
+	  public Response editEmail(@PathParam("id") int id,@QueryParam("email") String email) {
 			return userService.editEmail(id, email);
 		}
 	  
 	  @PUT
 	  @Path("/editPassword/{id}")
-	  public Response editPassword(int id, String password) {
+	  public Response editPassword(@PathParam("id") int id,@QueryParam("password") String password) {
 		              return userService.editPassword(id, password);
-		              
 	  }
 	  
 	  @GET
