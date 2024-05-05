@@ -9,7 +9,7 @@ import javax.persistence.PersistenceContext;
 
 import javax.ws.rs.core.Response;
 
-
+import model.Board;
 import model.Card;
 import model.ListOfCards;
 import model.User;
@@ -22,10 +22,17 @@ public class CardServices {
 	
 	
 	// create card
-	public Response createCard(Card card) {
+	public Response createCard(Card card,int boardId) {
 		User user = em.find(User.class, card.getAssignedTo());
+		Board board = em.find(Board.class, boardId);
 		if(user == null) {
 			return Response.status(Response.Status.NOT_FOUND).entity("User not Found").build();
+		}
+		if(board == null)
+			return Response.status(Response.Status.NOT_FOUND).entity("Board not Found").build();
+		for(ListOfCards list : board.getListOfCards()) {
+			if(list.getListName() == "Todo")
+				card.setList(list);
 		}
 		em.persist(card);
 		return Response.status(Response.Status.CREATED).entity(card).build();

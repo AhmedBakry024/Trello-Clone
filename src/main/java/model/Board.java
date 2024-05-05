@@ -117,6 +117,9 @@ public class Board {
 	    	}
 	    }
 	 
+	    public List<ListOfCards> getListOfCards(){
+	    	return listOfCards;
+	    }
 	    
 	    public List<Integer> getListOfCardsId() {
 	    	 if (this.listOfCardsId == null) {

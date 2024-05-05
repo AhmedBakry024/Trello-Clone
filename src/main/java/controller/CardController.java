@@ -27,8 +27,8 @@ public class CardController {
 	// create card
 	@POST
 	@Path("/create")
-	public Response CreateCard(Card card) {
-		return cardService.createCard(card);
+	public Response CreateCard(Card card,@QueryParam("boardId")int boardId) {
+		return cardService.createCard(card,boardId);
 	}
 	
 	
