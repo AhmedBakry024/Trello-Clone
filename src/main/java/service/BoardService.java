@@ -1,7 +1,7 @@
 package service;
 
 import java.util.List;
-
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -54,7 +54,7 @@ public class BoardService {
 
             entityManager.persist(board);
 
-            List<Integer> invitedIDList = user.getBoardID();
+            Set<Integer> invitedIDList = user.getBoardID();
             invitedIDList.add(board.getId());
             user.setBoardID(invitedIDList);
             entityManager.merge(user);
@@ -117,7 +117,7 @@ public class BoardService {
              }
 
              // Fetch userBoards associated with the user
-             List<Integer> userBoards = user.getBoardID();
+             Set<Integer> userBoards = user.getBoardID();
 
              if (userBoards.isEmpty()) {
                  throw new NotFoundException("No userBoards found for User ID: " + userId);
@@ -235,7 +235,7 @@ public class BoardService {
              // Remove board from user's boardID list
              User teamLeaderUser = entityManager.find(User.class, teamLeader);
              if (teamLeaderUser != null) {
-                 List<Integer> boardIDs = teamLeaderUser.getBoardID();
+                 Set<Integer> boardIDs = teamLeaderUser.getBoardID();
                  boardIDs.remove(Integer.valueOf(board.getId())); // Remove board ID from list
              }
 
