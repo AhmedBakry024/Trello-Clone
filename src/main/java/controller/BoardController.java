@@ -61,7 +61,7 @@ public class BoardController {
 	    @DELETE
 	    @Path("/deleteBoard")
 	    @Produces(MediaType.TEXT_PLAIN)
-	    public String deleteBoard(@QueryParam("name") String name, @QueryParam("teamLeader") int teamLeader) {
+	    public Response deleteBoard(@QueryParam("name") String name, @QueryParam("teamLeader") int teamLeader) {
 	        return boardService.deleteBoard(name, teamLeader);
 	    }
 }

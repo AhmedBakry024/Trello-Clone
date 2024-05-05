@@ -213,29 +213,42 @@ public class BoardService {
     //delete a board 
     //---------------------------------------------------------------- 
 
-    public String deleteBoard(String name, int teamLeader) {
-        try {
-            // Find the board by name
-            Board board = entityManager.createQuery("SELECT b FROM Board b WHERE b.name = :name", Board.class)
-                                       .setParameter("name", name)
-                                       .getSingleResult();
+    public Response deleteBoard(String name, int teamLeader) {
+    	 try {
+             // Find the board by name
+             Board board = entityManager.createQuery("SELECT b FROM Board b WHERE b.name = :name", Board.class)
+                                        .setParameter("name", name)
+                                        .getSingleResult();
 
-            if (board == null) {
-                return "Board with name " + name + " not found";
-            }
+             if (board == null) {
+                 return Response.status(Response.Status.NOT_FOUND)
+                                .entity("Board with name " + name + " not found")
+                                .build();
+             }
 
-            // Check if the team leader matches
-            if (board.getTeamLeader() != teamLeader) {
-                return "Only the team leader " + board.getTeamLeader() + " can delete this board";
-            }
+             // Check if the team leader matches
+             if (board.getTeamLeader() != teamLeader) {
+                 return Response.status(Response.Status.FORBIDDEN)
+                                .entity("Only the team leader " + board.getTeamLeader() + " can delete this board")
+                                .build();
+             }
 
-            entityManager.remove(board);
-            return board.getTeamLeader() + " Board " + name + " successfully deleted";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Failed to delete board. Status: 403";
-        }
-    }
+             // Remove board from user's boardID list
+             User teamLeaderUser = entityManager.find(User.class, teamLeader);
+             if (teamLeaderUser != null) {
+                 List<Integer> boardIDs = teamLeaderUser.getBoardID();
+                 boardIDs.remove(Integer.valueOf(board.getId())); // Remove board ID from list
+             }
 
+             entityManager.remove(board);
+             
+             return Response.ok(board.getTeamLeader() + " Board " + name + " successfully deleted").build();
+         } catch (Exception e) {
+             e.printStackTrace();
+             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .entity("Failed to delete board. Status: 500")
+                            .build();
+         }
+     }
       
 }
