@@ -1,7 +1,7 @@
 package service;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -55,6 +55,13 @@ public class BoardService {
 
             entityManager.persist(board);
 
+            List<Integer> invitedIDList = user.getBoardID();
+            invitedIDList.add(board.getId());
+            user.setBoardID(invitedIDList);
+            entityManager.merge(user);
+            
+            
+            
             // After persisting the board, automatically create the three lists of cards
             createDefaultListsForBoard(board);
 
@@ -67,6 +74,7 @@ public class BoardService {
                     .build();
         }
     }
+    
     private void createDefaultListsForBoard(Board board) {
         ListOfCards doneList = new ListOfCards("Done", board.getId());
         ListOfCards todoList = new ListOfCards("Todo", board.getId());
@@ -100,33 +108,30 @@ public class BoardService {
     //---------------------------------------------------------------- 
 
    
-    public List<Board> getBoardsByUserId(int userId) {
-        try {
-            // Find the user by ID
-            User user = entityManager.find(User.class, userId);
+    public Response getBoardsByUserId(int userId) {
+    	 try {
+             // Find the user by ID
+             User user = entityManager.find(User.class, userId);
 
-            if (user == null) {
-                throw new NotFoundException("User with ID " + userId + " not found");
-            }
+             if (user == null) {
+                 throw new NotFoundException("User with ID " + userId + " not found");
+             }
 
-            // Get all boards associated with this user including their list IDs
-            List<Board> boards = entityManager.createQuery(
-                    "SELECT DISTINCT b FROM Board b " +
-                    "LEFT JOIN FETCH b.invitedID " +
-                    "LEFT JOIN FETCH b.listOfCardsId " +
-                    "WHERE b.user.id = :userId", Board.class)
-                    .setParameter("userId", userId)
-                    .getResultList();
+             // Fetch userBoards associated with the user
+             List<Integer> userBoards = user.getBoardID();
 
-            if (boards.isEmpty()) {
-                throw new NotFoundException("No boards found for User ID: " + userId);
-            }
+             if (userBoards.isEmpty()) {
+                 throw new NotFoundException("No userBoards found for User ID: " + userId);
+             }
 
-            return boards;
-        } catch (Exception e) {
-            throw new InternalServerErrorException("Error fetching boards for User ID: " + userId);
-        }
-    }
+             return Response.ok(userBoards).build();
+         } catch (NotFoundException e) {
+             throw e;
+         } catch (Exception e) {
+             throw new InternalServerErrorException("Error fetching userBoards for User ID: " + userId);
+         }
+     }
+    
     
     
     

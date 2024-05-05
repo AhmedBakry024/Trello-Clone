@@ -18,7 +18,6 @@ public class ListServices {
 	@PersistenceContext(unitName = "database")
 	private EntityManager em;
 
-	
 	public Response createList(ListOfCards listOfCards, int userId) {
 		User user = em.find(User.class, userId);
 		Board board = em.find(Board.class, listOfCards.getBoardId());

@@ -40,7 +40,7 @@ public class BoardController {
 
 	    @GET
 	    @Path("/getBoardsByUserId")
-	    public List<Board> getBoardsByUserId(@QueryParam("userId") int userId) {
+	    public Response getBoardsByUserId(@QueryParam("userId") int userId) {
 	        return boardService.getBoardsByUserId(userId);
 	    }
 
