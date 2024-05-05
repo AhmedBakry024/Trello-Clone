@@ -21,7 +21,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 @Table(name = "User")
-public class User {
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -32,11 +32,15 @@ public class User {
     
     @ManyToMany(mappedBy = "invitedUsers") 
     @JsonIgnore
-    private Set<Board> boards = new HashSet<>();
+    private Set<Board> boards;
     
     @OneToMany(mappedBy="user") 
     @JsonIgnore
     private Set<Board> userBoards;
+    
+    @Column
+    @ElementCollection(targetClass=Integer.class , fetch = FetchType.EAGER)
+    private Set<Integer> boardID;
 
 
     public User() {
@@ -68,19 +72,15 @@ public class User {
     public boolean getIsTeamLeader() {
         return this.isTeamLeader;
     }
-    
-    @Column
-    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
-    private List<Integer> boardID = new ArrayList<>();
 
 
-    public List<Integer> getBoardID() {
+    public Set<Integer> getBoardID() {
     	 if (this.boardID == null) {
-	            this.boardID =  new ArrayList<>();
+	            this.boardID =  new HashSet<>();
 	        }
 	        return boardID;
 	}
-	public void setBoardID(List<Integer> boardID) {
+	public void setBoardID(Set<Integer> boardID) {
 		this.boardID = boardID;
 	}
 	
