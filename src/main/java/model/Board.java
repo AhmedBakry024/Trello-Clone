@@ -18,10 +18,36 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column
+    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
+    private List<Integer> invitedID = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "Board_User",
+            joinColumns = @JoinColumn(name = "board_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonIgnore
+    private Set<User> invitedUsers = new HashSet<>();
+    
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+    private List <ListOfCards> listOfCards ;
+    
+    @Column
+    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
+    private List<Integer> listOfCardsId = new ArrayList<>();
+    
     @Column(unique = true)
     private String name;
-
+    
     private int teamLeader;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id") 
+    @JsonIgnore
+    private User user;
     
     
     public Board() {
@@ -32,39 +58,11 @@ public class Board {
         this.teamLeader = teamLeader;
     }
 
-    // Getters and setters
-
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getTeamLeader() {
-        return teamLeader;
-    }
-
-    public void setTeamLeader(int teamLeader) {
-        this.teamLeader = teamLeader;
-    }
-
-    
-    @Column
-    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
-    private List<Integer> invitedID = new ArrayList<>();
-
-
-	public List<Integer> getInvitedID() {
+    public List<Integer> getInvitedID() {
 
 		 if (this.invitedID == null) {
 	            this.invitedID =  new ArrayList<>();
@@ -72,65 +70,57 @@ public class Board {
 	        return invitedID;
 	}
 
-	public void setInvitedID(List<Integer> invitedID) {
-		this.invitedID = invitedID;
+    public List<ListOfCards> getListOfCards(){
+		return listOfCards;
 	}
 
+    public List<Integer> getListOfCardsId() {
+		 if (this.listOfCardsId == null) {
+	            this.listOfCardsId =  new ArrayList<>();
+	        }
+	        return listOfCardsId;
+	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id") 
-    @JsonIgnore
-    private User user;
+    public String getName() {
+        return name;
+    }
 
-   
+    public int getTeamLeader() {
+        return teamLeader;
+    }
+
 	public User getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setId(int id) {
+        this.id = id;
+    }
+   
+	public void setInvitedID(List<Integer> invitedID) {
+		this.invitedID = invitedID;
 	}
-    
-	    @ManyToMany
-	    @JoinTable(
-	            name = "Board_User",
-	            joinColumns = @JoinColumn(name = "board_id"),
-	            inverseJoinColumns = @JoinColumn(name = "user_id")
-	    )
-	    @JsonIgnore
-	    private Set<User> invitedUsers = new HashSet<>();
-	
-  
-	    
-	    @Column
-	    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
-	    private List<Integer> listOfCardsId = new ArrayList<>();
 
-		@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-		@JsonIgnore
-	    private List <ListOfCards> listOfCards ;
+	public void setList(ListOfCards list) {
+		if(list != null) {
+	   		listOfCards.add(list);
+	   		list.setBoard(this);
+  		}
+	}
 
-	    public void setList(ListOfCards list) {
-	    	if(list != null) {
-	    		listOfCards.add(list);
-	    		list.setBoard(this);
-	    	}
-	    }
+	public void setListOfCardsId(List<Integer> listOfCardsId) {
+		this.listOfCardsId = listOfCardsId;
+	}
 	 
-	    public List<ListOfCards> getListOfCards(){
-	    	return listOfCards;
-	    }
+	    public void setName(String name) {
+		    this.name = name;
+		}
 	    
-	    public List<Integer> getListOfCardsId() {
-	    	 if (this.listOfCardsId == null) {
-		            this.listOfCardsId =  new ArrayList<>();
-		        }
-		        return listOfCardsId;
+	    public void setTeamLeader(int teamLeader) {
+		    this.teamLeader = teamLeader;
 		}
 
-		public void setListOfCardsId(List<Integer> listOfCardsId) {
-			this.listOfCardsId = listOfCardsId;
-		}
-
-	
+		public void setUser(User user) {
+			this.user = user;
+		}	
 }

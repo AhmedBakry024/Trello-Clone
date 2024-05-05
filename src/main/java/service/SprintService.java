@@ -1,31 +1,21 @@
 package service;
 
-import java.io.ObjectInputFilter.Status;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.websocket.server.PathParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import model.Card;
-import model.ListOfCards;
-import model.sprint;
+import model.*;
 
 @Stateless
-
 public class SprintService {
 
 	   @PersistenceContext(unitName = "database")

@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,32 +18,32 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "list")
 public class ListOfCards {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private String listName;
+	@ManyToOne
+	@JoinColumn(name ="board_id")
+	@JsonIgnore
+	private Board board;
+	private int boardId;
 	
 	@OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<Card> cards = new ArrayList<>();
 	
-	int boardId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 	
-	@ManyToOne
-	@JoinColumn(name ="board_id")
-	@JsonIgnore
-	private Board board;
+	private String listName;
 	
 	public ListOfCards() {};
-	public ListOfCards(String listName, int boardId) {
-	    this.listName = listName;
-	    this.boardId = boardId;
-	}
 	public ListOfCards(int id,String listName,List<Card>cards,int boardId) {
 		this.id = id;
 		this.listName = listName;
 		this.cards = cards;
 		this.boardId= boardId;
+	}
+	public ListOfCards(String listName, int boardId) {
+	    this.listName = listName;
+	    this.boardId = boardId;
 	}
 	
 	public void addCard(Card card) {
@@ -54,36 +53,36 @@ public class ListOfCards {
 		}
 	}
 
-	public void removeCard(Card card) {
-		cards.remove(card);
+	public Board getBoard() {
+		return board;
 	}
 
-	public String getListName() {
-		return listName;
+	public int getBoardId() {
+		return boardId;
 	}
 
-	public void setListName(String listName) {
-		this.listName = listName;
+	public List<Card> getCards() {
+		return cards;
 	}
 
 	public int getListId() {
 		return id;
 	}
 
-	public List<Card> getCards() {
-		return cards;
+	public String getListName() {
+		return listName;
+	}
+	
+	public void removeCard(Card card) {
+		cards.remove(card);
 	}
 	
 	public void setBoard(Board board) {
 		this.board = board;
 	}
 	
-	public int getBoardId() {
-		return boardId;
-	}
-	
-	public Board getBoard() {
-		return board;
+	public void setListName(String listName) {
+		this.listName = listName;
 	}
 	
 	

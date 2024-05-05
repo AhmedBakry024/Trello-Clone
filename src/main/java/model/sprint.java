@@ -1,7 +1,5 @@
 package model;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -24,65 +22,65 @@ import javax.persistence.OneToMany;
 @Entity
 @Table(name = "sprint")
 public class sprint {
+	
 		@Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private int id;
-	 
-		
+		@GeneratedValue(strategy = GenerationType.IDENTITY)
+		private int id;
 		@JsonIgnore
-		private int sprintId ; 
+		private int sprintId ;
 		
-		   public int getSprintId() {
-			return sprintId;
+		@OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+		@JsonIgnore
+		private Set<Card> cards = new HashSet<>();
+		
+		@Column
+		@ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
+		private List<Integer> cardsID  = new ArrayList<>(); 
+		
+		
+		public sprint() {
+		    }
+		public sprint(int id) {
+			   sprintId = id ; 
+		   }
+		public void addToCardid(int cardId) {
+		        this.cardsID.add(cardId);
+		    }
+		public List<Integer> getCardId() {
+			
+		 if (this.cardsID == null) {
+	            this.cardsID =  new ArrayList<>();
+	        }
+	        return cardsID;
 		}
-		public void setSprintId(int sprintId) {
-			this.sprintId = sprintId;
-		}
-		public int getId() {
+	   
+	    public int getId() {
 			return id;
 		}
+	   
+		public Set<Card> getLists() {
+			return cards;
+		}
+
+	    public int getSprintId() {
+			return sprintId;
+		}
+		      	
+	    public void setCardId(List<Integer> invitedID) {
+			this.cardsID = invitedID;
+		}
+
 		public void setId(int id) {
 			this.id = id;
 		}
-		public sprint() {
-		    }
-		   public sprint(int id) {
-			   sprintId = id ; 
-		   }
-	   
-		    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-		    @JsonIgnore
-		    private Set<Card> cards = new HashSet<>();;
-	   
-		   
-		   public Set<Card> getLists() {
-		        return cards;
-		    }
 
-		    public void setLists(Set<Card> cards) {
-		        this.cards = cards;
-		    }
-		      
-		
-		    @Column
-		    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
-		    private List<Integer> cardsID  = new ArrayList<>();;
-
-			public List<Integer> getCardId() {
-				
-				 if (this.cardsID == null) {
-			            this.cardsID =  new ArrayList<>();
-			        }
-			        return cardsID;
-			}
-
-			public void setCardId(List<Integer> invitedID) {
-				this.cardsID = invitedID;
-			}
-		
-			 public void addToCardid(int cardId) {
-			        this.cardsID.add(cardId);
-			    }
+		public void setLists(Set<Card> cards) {
+	        this.cards = cards;
+	    }
+	
+		 public void setSprintId(int sprintId) {
+			this.sprintId = sprintId;
+		}
 			
 		    
 }

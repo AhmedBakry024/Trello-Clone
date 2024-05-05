@@ -16,14 +16,14 @@ import model.Card;
 
 
 @Stateless
-public class searchService {
+public class SearchService {
 	@PersistenceContext(unitName = "database")
 	private static EntityManager em;
 	
 	//----------------------------------------------------------
 	// Search for cards with Card Title matches with Keywords
 	//----------------------------------------------------------
-	public static List<Card> searchCardsByTitle(String keywords) {
+	public List<Card> searchCardsByTitle(String keywords) {
 		// Split the input keywords string into individual words
         List<String> keywordList = Arrays.asList(keywords.split("\\s+"));
         
@@ -43,7 +43,7 @@ public class searchService {
 	//--------------------------------------------------------------
 	// Search for cards with Card Description matches with Keywords
 	//--------------------------------------------------------------
-	public static List<Card> searchCardsByDescription(String keywords) {
+	public List<Card> searchCardsByDescription(String keywords) {
         // Split the input keywords string into individual words
         List<String> keywordList = Arrays.asList(keywords.split("\\s+"));
         
@@ -65,7 +65,7 @@ public class searchService {
 	// Search for cards with Card status matches with Keywords
 	// expect one keyword  ( ToDo - Doing - Test - Done )
 	//----------------------------------------------------------
-	public static List<Card> searchCardsByStatus(String keywords) {
+	public List<Card> searchCardsByStatus(String keywords) {
         // Construct JPQL query to search for cards with status matching the specified keyword
         String jpql = "SELECT c FROM Card c WHERE c.status = :status";
         
@@ -85,7 +85,7 @@ public class searchService {
 	// Search for cards with Card assignee Id matches with assignedToId
 	// Note : Id is int 
 	//------------------------------------------------------------------
-	public static List<Card> searchCardsByAssignedTo(int assignedToId) {
+	public List<Card> searchCardsByAssignedTo(int assignedToId) {
         // Construct JPQL query to search for cards with assignedTo matching the specified ID
         String jpql = "SELECT c FROM Card c WHERE c.assignedTo = :assignedToId";
         
@@ -103,7 +103,7 @@ public class searchService {
 	// Search for cards with Card Reporter Id matches with ReporterId
 	// Note : Id is int 
 	//------------------------------------------------------------------
-	public static List<Card> searchCardsByReporterId(int reporterId) {
+	public List<Card> searchCardsByReporterId(int reporterId) {
         // Construct JPQL query to search for cards with reporterId matching the specified ID
         String jpql = "SELECT c FROM Card c WHERE c.reporterId = :reporterId";
         
@@ -119,7 +119,7 @@ public class searchService {
 	
 	
 	
-	public static List<Card> searchCardsByCreationDate(Date creationDate) {
+	public List<Card> searchCardsByCreationDate(Date creationDate) {
         // Construct JPQL query to search for cards with creationDate matching the specified date
         String jpql = "SELECT c FROM Card c WHERE c.creationDate = :creationDate";
 

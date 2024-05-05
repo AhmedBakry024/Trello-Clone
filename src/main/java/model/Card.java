@@ -23,32 +23,34 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "card")
 public class Card {
 	enum Status {
-	    TO_DO,
+	    DONE,
 	    IN_PROGRESS,
 	    TEST,
-	    DONE
+	    TO_DO
 	}
+	private int assignedTo;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int cardId;
-	private String title;
-	private String description;
-	private Status status = Status.TO_DO;
-	
+	@ElementCollection(fetch = FetchType.EAGER)
+	private List<String> comments = new ArrayList<>();
 	@Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 	
-	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> comments = new ArrayList<>();
-	
-	private int assignedTo;
-	private int reporterId;
-	
+	private String description;
 	
 	@ManyToOne
 	@JoinColumn(name ="list_id")
 	@JsonIgnore
 	private ListOfCards list;
+	
+	private int reporterId;
+	@ManyToOne
+    private sprint sprint;
+	
+	private Status status = Status.TO_DO;
+	
+	private String title;
 
 	
 	public Card(int reporterId) {
@@ -61,84 +63,84 @@ public class Card {
 		this.title = Title;
 		this.description = description;
 		this.assignedTo = assignedTo;
+		this.creationDate = new Date();
 	}
 	
-	public void setList(ListOfCards list) {
-		this.list = list;
+	public void addComment(String Comment) {
+		if(Comment != null && !Comment.trim().isEmpty()) {
+			this.comments.add(Comment);
+		}
 	}
 	
-	public ListOfCards getList() {
-		return list !=null ? list : null;
+	public int getAssignedTo() {
+		return assignedTo;
 	}
 	
 	public int getCardId() {
 		return cardId;
 	}
 
+	public List<String> getComments() {
+		return comments;
+	}
+
+	public Date getCreationDate() {
+        return creationDate;
+    }
+
+	public String getDescription() {
+		return description;
+	}
+
+	public ListOfCards getList() {
+		return list !=null ? list : null;
+	}
+
+	public int getListId() {
+		if(list == null)
+			return 0;
+		return list.getListId();
+	}
+
+	public int getreporterId() {
+		return reporterId;
+	}
+
+	public sprint getSprint() {
+		return sprint;
+	}
+
+	public Status getStatus() {
+        return status;
+    }
+	
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
+	
+	public void setAssignedTo(int assignedTo) {
+		this.assignedTo = assignedTo;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public List<String> getComments() {
-		return comments;
-	}
-
-	public void addComment(String Comment) {
-		if(Comment != null && !Comment.trim().isEmpty()) {
-			this.comments.add(Comment);
-		}
-	}
-
-	public int getAssignedTo() {
-		return assignedTo;
-	}
-
-	public void setAssignedTo(int assignedTo) {
-		this.assignedTo = assignedTo;
+	public void setList(ListOfCards list) {
+		this.list = list;
 	}
 	
-	public int getreporterId() {
-		return reporterId;
-	}
-
-	
-	public int getListId() {
-		if(list == null)
-			return 0;
-		return list.getListId();
-	}
-	@ManyToOne
-    private sprint sprint;
-	public sprint getSprint() {
-		return sprint;
-	}
-
 	public void setSprint(sprint sprint) {
 		this.sprint = sprint;
 	}
-	
-	public Status getStatus() {
-        return status;
-    }
 
     public void setStatus(Status status) {
         this.status = status;
     }
     
-    public Date getCreationDate() {
-        return creationDate;
-    }
+    public void setTitle(String title) {
+		this.title = title;
+	}
 	
 }

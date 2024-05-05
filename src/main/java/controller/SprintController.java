@@ -1,10 +1,7 @@
 package controller;
 
-import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.websocket.server.PathParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,7 +11,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import model.ListOfCards;
 import service.SprintService;
 
 @Stateless

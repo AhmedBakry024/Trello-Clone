@@ -15,7 +15,6 @@ public class UserServices {
 	@PersistenceContext(unitName = "database")
 	private EntityManager em;
 
-	
 	public Response createUser(User user) {
 		User userFromDb;
 		
@@ -26,7 +25,7 @@ public class UserServices {
 		    userFromDb = null;
 		}
         // check if email is valid
-		if (!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).matches()) {
+		if (!isEmailValid(user.getEmail())) {
 			return Response.status(400).entity("Invalid email").build();
 		}
 		
@@ -38,7 +37,7 @@ public class UserServices {
 		
 		// add the user to the database
 		em.persist(user);
-		return Response.status(201).entity("User created successfully").build();
+		return Response.status(200).entity("User created successfully").build();
 	}
 
 	
@@ -47,7 +46,7 @@ public class UserServices {
         User userFromDb;
         
 		// check if email is valid
-        if (!VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail()).matches()) {
+        if (!isEmailValid(user.getEmail())) {
             return Response.status(400).entity("Invalid email").build();
         }
         try {
@@ -116,7 +115,11 @@ public class UserServices {
 		return Response.status(200).entity("Password updated successfully").build();
 	}
 	
+	public boolean isEmailValid(String email) {
+		final Pattern VALID_EMAIL_ADDRESS_REGEX =
+			    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+		return VALID_EMAIL_ADDRESS_REGEX.matcher(email).matches();
+	}
 	
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
-		    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	
 }

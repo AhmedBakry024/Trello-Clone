@@ -24,6 +24,7 @@ public class CardServices {
 	
 	// create card
 	public Response createCard(Card card,int boardId) {
+		User reporter = em.find(User.class, card.getreporterId());
 		User user = em.find(User.class, card.getAssignedTo());
 		Board board = em.find(Board.class, boardId);
 

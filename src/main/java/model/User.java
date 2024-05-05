@@ -1,6 +1,5 @@
 package model;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+
 import javax.persistence.ManyToMany;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,6 +24,15 @@ public class User {
     private String email;
     private String password;
     private boolean isTeamLeader;
+    
+    @ManyToMany(mappedBy = "invitedUsers") 
+    @JsonIgnore
+    private Set<Board> boards = new HashSet<>();
+    
+    @OneToMany(mappedBy="user") 
+    @JsonIgnore
+    private Set<Board> userBoards;
+
 
     public User() {
     }
@@ -55,6 +63,13 @@ public class User {
     public boolean getIsTeamLeader() {
         return this.isTeamLeader;
     }
+    
+	 public Set<Board> getUserBoards() {
+	        if (this.userBoards == null) {
+	            this.userBoards = new HashSet<Board>(); 
+	        }
+	        return userBoards;
+	 }
 
     public void setName(String name) {
         this.name = name;
@@ -71,12 +86,6 @@ public class User {
     public void setIsTeamLeader(boolean isTeamLeader) {
         this.isTeamLeader = isTeamLeader;
     }
-    
-    @OneToMany(mappedBy="user")	
-    @JsonIgnore
-    private Set<Board> userBoards;
-
-
 
 	public void setUserBoards(Set<Board> userBoards) {
 		this.userBoards = userBoards;
@@ -89,19 +98,4 @@ public class User {
 	public void setTeamLeader(boolean isTeamLeader) {
 		this.isTeamLeader = isTeamLeader;
 	}
-	 public Set<Board> getUserBoards() {
-	        if (this.userBoards == null) {
-	            this.userBoards = new HashSet<Board>(); 
-	        }
-	        return userBoards;
-	    }
-	 
-	 
-	 @ManyToMany(mappedBy = "invitedUsers")
-	    @JsonIgnore
-	    private Set<Board> boards = new HashSet<>();
-
- 
-	 
-	 
 }
