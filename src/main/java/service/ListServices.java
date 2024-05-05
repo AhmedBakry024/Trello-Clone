@@ -1,16 +1,10 @@
 package service;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import model.Board;
@@ -19,18 +13,13 @@ import model.ListOfCards;
 import model.User;
 
 @Stateless
-@Path("/list")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class ListServices {
 	
 	@PersistenceContext(unitName = "database")
 	private EntityManager em;
 
-	//create list
-	@POST
-	@Path("/create/{userId}")
-	public Response createList(ListOfCards listOfCards,@PathParam("userId") int userId) {
+	
+	public Response createList(ListOfCards listOfCards, int userId) {
 		User user = em.find(User.class, userId);
 		Board board = em.find(Board.class, listOfCards.getBoardId());
 		if(board == null) 
@@ -53,10 +42,8 @@ public class ListServices {
 		}
 	}
 	
-	//delete a list by ListId	
-	@DELETE
-	@Path("/deletelist/{listId}/{userId}")
-	public Response deletelist(@PathParam("listId") int listId,@PathParam("userId")int userId) {
+
+	public Response deletelist(int listId,int userId) {
 		User user = em.find(User.class, userId);
 		
 		if(user != null) {
@@ -89,10 +76,8 @@ public class ListServices {
 		return Response.status(Response.Status.NOT_FOUND).entity("User Are Not Found").build();
 	}
 	
-	//Not Working
-	@GET
-    @Path("/getallcardslist/{listId}")
-    public Response getAllCardsInList(@PathParam("listId") int listId) {
+
+    public Response getAllCardsInList(int listId) {
         ListOfCards list = em.find(ListOfCards.class, listId);
         if (list == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -101,4 +86,18 @@ public class ListServices {
         }
     }
 	
+	// get all lists created 
+    public Response getAllLists() {
+        try {
+            List<ListOfCards> lists = em.createQuery("SELECT l FROM ListOfCards l", ListOfCards.class)
+                                        .getResultList();
+            return Response.ok(lists).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Error fetching lists: " + e.getMessage())
+                           .build();
+        }
+    }
+	
+		
 }

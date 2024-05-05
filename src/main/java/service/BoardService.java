@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import model.Board;
+import model.ListOfCards;
 import model.User;
 
 import javax.ws.rs.*;
@@ -45,7 +46,6 @@ public class BoardService {
     
     public Response createBoard(int userId, Board board) {
         try {
-        	
             User user = entityManager.find(User.class, userId);
             if (user == null) {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -54,17 +54,20 @@ public class BoardService {
             }
 
             if (!user.getIsTeamLeader()) {
-            	 return Response.status(Response.Status.NOT_FOUND)
-                         .entity("User with ID " + userId + " is not a Team Leader")
-                         .build();
+                return Response.status(Response.Status.FORBIDDEN)
+                        .entity("User with ID " + userId + " is not a Team Leader")
+                        .build();
             }
-            // Set the team leader of the board to the user's ID 
-            board.setTeamLeader(user.getId());
 
+            // Set the team leader of the board to the user's ID
+            board.setTeamLeader(user.getId());
             board.setUser(user);
-            
+
             entityManager.persist(board);
-        
+
+            // After persisting the board, automatically create the three lists of cards
+            createDefaultListsForBoard(board);
+
             return Response.status(Response.Status.CREATED)
                     .entity("Board created successfully")
                     .build();
@@ -74,10 +77,32 @@ public class BoardService {
                     .build();
         }
     }
+    private void createDefaultListsForBoard(Board board) {
+        ListOfCards doneList = new ListOfCards("Done", board.getId());
+        ListOfCards todoList = new ListOfCards("Todo", board.getId());
+        ListOfCards progressList = new ListOfCards("Progress", board.getId());
+
+        // Set the board reference for each list
+        doneList.setBoard(board);
+        todoList.setBoard(board);
+        progressList.setBoard(board);
+
+        // Persist the lists
+        entityManager.persist(doneList);
+        entityManager.persist(todoList);
+        entityManager.persist(progressList);
+
+        // Optionally, add these lists to the board's list of card IDs
+        board.getListOfCardsId().add(doneList.getListId());
+        board.getListOfCardsId().add(todoList.getListId());
+        board.getListOfCardsId().add(progressList.getListId());
+
+        // Update the board entity in the database
+        entityManager.merge(board);
+    }
     
     
-    
-    
+    // need to be fixed 
     //---------------------------------------------------------------- 
     // done 
     // 2.b. - Users can view all boards they have access to.
@@ -94,9 +119,12 @@ public class BoardService {
                 throw new NotFoundException("User with ID " + userId + " not found");
             }
 
-            // Get all boards associated with this user
+            // Get all boards associated with this user including their list IDs
             List<Board> boards = entityManager.createQuery(
-                    "SELECT DISTINCT b FROM Board b LEFT JOIN FETCH b.invitedID WHERE b.user.id = :userId", Board.class)
+                    "SELECT DISTINCT b FROM Board b " +
+                    "LEFT JOIN FETCH b.invitedID " +
+                    "LEFT JOIN FETCH b.listOfCardsId " +
+                    "WHERE b.user.id = :userId", Board.class)
                     .setParameter("userId", userId)
                     .getResultList();
 

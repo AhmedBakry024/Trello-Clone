@@ -56,13 +56,11 @@ public class Card {
 		this.creationDate = new Date();
 	};
 	
-	public Card(int cardId,String Title,String description,int assignedTo,ListOfCards list) {
+	public Card(int cardId,String Title,String description,int assignedTo) {
 		this.cardId = cardId;
 		this.title = Title;
 		this.description = description;
 		this.assignedTo = assignedTo;
-		this.list = list;
-		this.creationDate = new Date();
 	}
 	
 	public void setList(ListOfCards list) {
@@ -117,7 +115,18 @@ public class Card {
 
 	
 	public int getListId() {
+		if(list == null)
+			return 0;
 		return list.getListId();
+	}
+	@ManyToOne
+    private sprint sprint;
+	public sprint getSprint() {
+		return sprint;
+	}
+
+	public void setSprint(sprint sprint) {
+		this.sprint = sprint;
 	}
 	
 	public Status getStatus() {

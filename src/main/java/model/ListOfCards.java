@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,7 +36,10 @@ public class ListOfCards {
 	private Board board;
 	
 	public ListOfCards() {};
-	
+	public ListOfCards(String listName, int boardId) {
+	    this.listName = listName;
+	    this.boardId = boardId;
+	}
 	public ListOfCards(int id,String listName,List<Card>cards,int boardId) {
 		this.id = id;
 		this.listName = listName;
@@ -81,5 +85,7 @@ public class ListOfCards {
 	public Board getBoard() {
 		return board;
 	}
+	
+	
 	
 }

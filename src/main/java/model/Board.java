@@ -59,30 +59,22 @@ public class Board {
     }
 
     
-    
-    
     @Column
     @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
     private List<Integer> invitedID = new ArrayList<>();
 
 
 	public List<Integer> getInvitedID() {
-		
-		
-		
+
 		 if (this.invitedID == null) {
 	            this.invitedID =  new ArrayList<>();
 	        }
 	        return invitedID;
-		
-	
 	}
 
 	public void setInvitedID(List<Integer> invitedID) {
 		this.invitedID = invitedID;
 	}
-
-
 
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -108,7 +100,13 @@ public class Board {
 	    @JsonIgnore
 	    private Set<User> invitedUsers = new HashSet<>();
 	
-	    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+  
+	    
+	    @Column
+	    @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
+	    private List<Integer> listOfCardsId = new ArrayList<>();
+
+		@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
 		@JsonIgnore
 	    private List <ListOfCards> listOfCards ;
 
@@ -119,6 +117,20 @@ public class Board {
 	    	}
 	    }
 	 
-	 
+	    public List<ListOfCards> getListOfCards(){
+	    	return listOfCards;
+	    }
+	    
+	    public List<Integer> getListOfCardsId() {
+	    	 if (this.listOfCardsId == null) {
+		            this.listOfCardsId =  new ArrayList<>();
+		        }
+		        return listOfCardsId;
+		}
+
+		public void setListOfCardsId(List<Integer> listOfCardsId) {
+			this.listOfCardsId = listOfCardsId;
+		}
+
 	
 }
