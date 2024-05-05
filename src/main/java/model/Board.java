@@ -29,7 +29,7 @@ public class Board {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @JsonIgnore
-    private Set<User> invitedUsers = new HashSet<>();
+    private Set<User> invitedUsers ;
     
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
@@ -37,7 +37,7 @@ public class Board {
     
     @Column
     @ElementCollection(targetClass=Integer.class , fetch = FetchType.LAZY)
-    private List<Integer> listOfCardsId = new ArrayList<>();
+    private List<Integer> listOfCardsId ;
     
     @Column(unique = true)
     private String name;

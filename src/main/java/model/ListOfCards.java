@@ -2,9 +2,11 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,9 +26,9 @@ public class ListOfCards {
 	private Board board;
 	private int boardId;
 	
-	@OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "list",fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private List<Card> cards ;
+	private Set<Card> cards ;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +37,7 @@ public class ListOfCards {
 	private String listName;
 	
 	public ListOfCards() {};
-	public ListOfCards(int id,String listName,List<Card>cards,int boardId) {
+	public ListOfCards(int id,String listName,Set<Card>cards,int boardId) {
 		this.id = id;
 		this.listName = listName;
 		this.cards = cards;
@@ -61,7 +63,7 @@ public class ListOfCards {
 		return boardId;
 	}
 
-	public List<Card> getCards() {
+	public Set<Card> getCards() {
 		return cards;
 	}
 

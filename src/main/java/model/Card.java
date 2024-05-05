@@ -53,16 +53,13 @@ public class Card {
 	
 	public Card() {}
 	
-	public Card(int reporterId) {
-		this.reporterId = reporterId;
-		this.creationDate = new Date();
-	};
 	
-	public Card(int cardId,String Title,String description,int assignedTo) {
+	public Card(int cardId,String Title,String description,int assignedTo,int reporterId) {
 		this.cardId = cardId;
 		this.title = Title;
 		this.description = description;
 		this.assignedTo = assignedTo;
+		this.reporterId = reporterId;
 		this.creationDate = new Date();
 	}
 	
