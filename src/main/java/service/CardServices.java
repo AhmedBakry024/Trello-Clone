@@ -2,6 +2,7 @@ package service;
 
 import java.util.List;
 
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,6 +26,7 @@ public class CardServices {
 	public Response createCard(Card card,int boardId) {
 		User user = em.find(User.class, card.getAssignedTo());
 		Board board = em.find(Board.class, boardId);
+
 		if(user == null) {
 			return Response.status(Response.Status.NOT_FOUND).entity("User not Found").build();
 		}
