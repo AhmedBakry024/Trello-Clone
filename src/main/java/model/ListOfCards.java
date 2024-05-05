@@ -26,7 +26,7 @@ public class ListOfCards {
 	
 	@OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private List<Card> cards = new ArrayList<>();
+	private List<Card> cards ;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

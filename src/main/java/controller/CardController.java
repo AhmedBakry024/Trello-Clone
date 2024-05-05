@@ -41,14 +41,14 @@ public class CardController {
 	//add description to card by CardId
 	@POST
 	@Path("/description")
-	public Response addDescription(@QueryParam("cardId")int cardId,String description) {
+	public Response addDescription(@QueryParam("cardId")int cardId,@QueryParam("Description")String description) {
 		return cardService.addDescription(cardId, description);
 	}
 	
 	// add comment to card by CardId
 	@POST
     @Path("/comment")
-	public Response addComment(@QueryParam("cardId")int cardId,String comment) {
+	public Response addComment(@QueryParam("cardId")int cardId,@QueryParam("Comment")String comment) {
 		return cardService.addComment(cardId, comment);
 	}
 	

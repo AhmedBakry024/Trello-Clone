@@ -1,6 +1,6 @@
 package model;
 
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 
@@ -28,15 +28,14 @@ public class Card {
 	    TEST,
 	    TO_DO
 	}
-	private int assignedTo;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int cardId;
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> comments = new ArrayList<>();
+	private List<String> comments ;
 	@Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
-	
+	private int assignedTo;
 	private String description;
 	
 	@ManyToOne
@@ -51,7 +50,8 @@ public class Card {
 	private Status status = Status.TO_DO;
 	
 	private String title;
-
+	
+	public Card() {}
 	
 	public Card(int reporterId) {
 		this.reporterId = reporterId;
@@ -142,5 +142,7 @@ public class Card {
     public void setTitle(String title) {
 		this.title = title;
 	}
-	
+    public void setreporterId(int reporterId) {
+        this.reporterId = reporterId;
+    } 
 }
