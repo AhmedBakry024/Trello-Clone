@@ -1,0 +1,10 @@
+ @Temporal(TemporalType.TIMESTAMP)
+    private Date deadline;
+    
+    public Date getDeedline() {
+        return deadline;
+    }
+
+    public void setDeedline(Date deadline) {
+        this.deadline = deadline;
+    }
