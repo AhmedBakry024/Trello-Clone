@@ -93,17 +93,17 @@ public class CardServices {
         }
     }
 
-    public Response assignedTo(int cardId, int Id) {
+    public Response assignedTo(int cardId, int assignedTo) {
         Card card = em.find(Card.class, cardId);
         if (card == null) return Response.status(Response.Status.NOT_FOUND).build();
         else {
             if (card.getList() == null || card.getList().getBoard() == null)
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("card are not in list or the list are not in board please check again").build();
-            if (!card.getList().getBoard().getInvitedID().contains(Id))
+            if (!card.getList().getBoard().getInvitedID().contains(assignedTo))
                 return Response.status(Response.Status.NOT_FOUND).entity("User are not in the board").build();
-            User user = em.find(User.class, Id);
+            User user = em.find(User.class, assignedTo);
             if (user == null) return Response.status(Response.Status.NOT_FOUND).entity("User Not Found").build();
-            card.setAssignedTo(Id);
+            card.setAssignedTo(assignedTo);
             em.merge(card);
             return Response.status(Response.Status.OK).build();
         }

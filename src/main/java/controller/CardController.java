@@ -55,8 +55,8 @@ public class CardController {
 	// assigned to anyone by the CardID
 	@POST
     @Path("/assignedTo")
-	public Response assignedTo(@QueryParam("cardId")int cardId,@QueryParam("assignedTo")int userId) {
-		return cardService.assignedTo(cardId, userId);
+	public Response assignedTo(@QueryParam("cardId")int cardId,@QueryParam("assignedTo")int assignedTo) {
+		return cardService.assignedTo(cardId, assignedTo);
 	}
 
 	@GET
