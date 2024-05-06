@@ -3,10 +3,12 @@ package service;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Response;
 
+import messaging.JMSClient;
 import model.User;
 
 @Stateless
@@ -14,9 +16,13 @@ public class UserServices {
 	
 	@PersistenceContext(unitName = "database")
 	private EntityManager em;
+	
+//	@Inject
+//	private JMSClient messagingClient;
 
 	public Response createUser(User user) {
 		User userFromDb;
+//		messagingClient.sendMessage("User created: " + user.getEmail());
 		
 		try {
 			userFromDb = (User) em.createQuery("SELECT u FROM User u WHERE u.email = :email")
