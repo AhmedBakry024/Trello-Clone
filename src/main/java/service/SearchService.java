@@ -67,13 +67,14 @@ public class SearchService {
 	//----------------------------------------------------------
 	public List<Card> searchCardsByStatus(String keywords) {
         // Construct JPQL query to search for cards with status matching the specified keyword
-        String jpql = "SELECT c FROM Card c WHERE c.cardStatus = :keywords";
+        String jpql = "SELECT c FROM Card c WHERE c.status = :status";
         
         // Create TypedQuery with the JPQL query
         TypedQuery<Card> query = em.createQuery(jpql, Card.class);
         
         // Set the parameter
-        query.setParameter("keywords", keywords);
+        // Assuming keywords contain a single status value
+        query.setParameter("status", Status.valueOf(keywords.toUpperCase()));
 
         // Execute the query and return the result
         return query.getResultList();
