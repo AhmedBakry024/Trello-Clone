@@ -1,7 +1,7 @@
 package service;
 
 import java.util.List;
-import java.util.Set;
+
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -121,12 +121,10 @@ public class CardServices {
     }
 
     public Response getCard(int cardId) {
-        Card card;
-        try {
-            card = em.find(Card.class, cardId);
-            return Response.ok(card).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
-        }
+        Card card = em.find(Card.class, cardId);
+        if(card == null)
+        	return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
+        return Response.ok(card).build();
+
     }
 }
