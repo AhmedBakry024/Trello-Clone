@@ -43,6 +43,12 @@ public class SprintService {
 	        }
 	    }
 
+	   
+	    //-------------------BONUS PART 1 -------------------------
+	   	// This API  helps start a new sprint,
+	    // move unfinished tasks to it, and close the current sprint.
+	   
+	   
 	   // **********************
 	   // need timer 
 	   // Start a new Sprint 
@@ -133,6 +139,12 @@ public class SprintService {
 	    }
 
 	    
+	    
+	    
+	    //-------------------BONUS PART 2 -------------------------
+	    // Also, you need another API for
+	    // generating a report based on a sprint ID, showing sprint metadata, Total completed
+	    // story points and Total uncompleted story points
 	    
 	    
 	    // get the statistics of each sprint 
