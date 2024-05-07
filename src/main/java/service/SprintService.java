@@ -201,33 +201,5 @@ public class SprintService {
 	        }
 	    } 
 	            
-	            
-	            
-	           
 
-	   
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
 }

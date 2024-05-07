@@ -3,12 +3,11 @@ package service;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Response;
 
-import messaging.JMSClient;
 import model.User;
 
 @Stateless
