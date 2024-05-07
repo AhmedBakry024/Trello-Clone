@@ -1,7 +1,11 @@
 package service;
 
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +22,7 @@ import model.Card;
 @Stateless
 public class SearchService {
 	@PersistenceContext(unitName = "database")
-	private static EntityManager em;
+	private EntityManager em;
 	
 	//----------------------------------------------------------
 	// Search for cards with Card Title matches with Keywords
@@ -65,20 +69,19 @@ public class SearchService {
 	// Search for cards with Card status matches with Keywords
 	// expect one keyword  ( ToDo - Doing - Test - Done )
 	//----------------------------------------------------------
-	public List<Card> searchCardsByStatus(String keywords) {
-        // Construct JPQL query to search for cards with status matching the specified keyword
-        String jpql = "SELECT c FROM Card c WHERE c.status = :status";
-        
-        // Create TypedQuery with the JPQL query
-        TypedQuery<Card> query = em.createQuery(jpql, Card.class);
-        
-        // Set the parameter
-        // Assuming keywords contain a single status value
-        query.setParameter("status", Status.valueOf(keywords.toUpperCase()));
+	public List<Card> searchCardsByStatus(String keyword) {
+	    // Construct JPQL query to search for cards with status matching the specified keyword
+	    String jpql = "SELECT c FROM Card c WHERE c.cardStatus = :keyword";
 
-        // Execute the query and return the result
-        return query.getResultList();
-    }
+	    // Create TypedQuery with the JPQL query
+	    TypedQuery<Card> query = em.createQuery(jpql, Card.class);
+
+	    // Set the parameter
+	    query.setParameter("keyword", keyword);
+
+	    // Execute the query and return the result
+	    return query.getResultList();
+	}
 	
 	
 	//------------------------------------------------------------------
@@ -119,20 +122,97 @@ public class SearchService {
 	
 	
 	
-	public List<Card> searchCardsByCreationDate(Date creationDate) {
-        // Construct JPQL query to search for cards with creationDate matching the specified date
-        String jpql = "SELECT c FROM Card c WHERE c.creationDate = :creationDate";
+	public List<Card> searchCardsByCreationDate(String creationDateStr) {
+	    try {
+	        // Parse the date string into a LocalDate object
+	        LocalDate creationDate = LocalDate.parse(creationDateStr);
 
-        // Create TypedQuery with the JPQL query
-        TypedQuery<Card> query = em.createQuery(jpql, Card.class);
+	        // Construct the JPQL query to search for cards with the given creation date
+	        String jpql = "SELECT c FROM Card c WHERE c.creationDate = :creationDate";
 
-        // Set the parameter
-        query.setParameter("creationDate", creationDate, TemporalType.TIMESTAMP);
+	        // Create TypedQuery with the JPQL query
+	        TypedQuery<Card> query = em.createQuery(jpql, Card.class);
 
-        // Execute the query and return the result
-        return query.getResultList();
-    }
+	        // Set the parameter
+	        query.setParameter("creationDate", creationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+	        // Execute the query and return the result
+	        return query.getResultList();
+	    } catch (DateTimeParseException e) {
+	        // Handle parsing exception
+	        return null;
+	    }
+	}
 	
+	
+	
+	
+	public List<Card> searchCardsBySpecificDeedline(String deedlineStr) {
+	    try {
+	        // Parse the date string into a LocalDate object
+	        LocalDate deedline = LocalDate.parse(deedlineStr);
+
+	        // Construct the JPQL query to search for cards with the given deedline
+	        String jpql = "SELECT c FROM Card c WHERE c.deedline = :deedline";
+
+	        // Create TypedQuery with the JPQL query
+	        TypedQuery<Card> query = em.createQuery(jpql, Card.class);
+
+	        // Set the parameter
+	        query.setParameter("deedline", deedline.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+	        // Execute the query and return the result
+	        return query.getResultList();
+	    } catch (DateTimeParseException e) {
+	        // Handle parsing exception
+	        return null;
+	    }
+	}
+	
+	
+	public List<Card> searchCardsBeforeDeedline(String deedlineStr) {
+	    try {
+	        // Parse the date string into a LocalDate object
+	        LocalDate deedline = LocalDate.parse(deedlineStr);
+
+	        // Construct the JPQL query to search for cards with the given deedline
+	        String jpql = "SELECT c FROM Card c WHERE c.deedline <= :deedline";
+
+	        // Create TypedQuery with the JPQL query
+	        TypedQuery<Card> query = em.createQuery(jpql, Card.class);
+
+	        // Set the parameter
+	        query.setParameter("deedline", deedline.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+	        // Execute the query and return the result
+	        return query.getResultList();
+	    } catch (DateTimeParseException e) {
+	        // Handle parsing exception
+	        return null;
+	    }
+	}
+	
+	public List<Card> searchCardsAfterDeedline(String deedlineStr) {
+	    try {
+	        // Parse the date string into a LocalDate object
+	        LocalDate deedline = LocalDate.parse(deedlineStr);
+
+	        // Construct the JPQL query to search for cards with the given deedline
+	        String jpql = "SELECT c FROM Card c WHERE c.deedline >= :deedline";
+
+	        // Create TypedQuery with the JPQL query
+	        TypedQuery<Card> query = em.createQuery(jpql, Card.class);
+
+	        // Set the parameter
+	        query.setParameter("deedline", deedline.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+	        // Execute the query and return the result
+	        return query.getResultList();
+	    } catch (DateTimeParseException e) {
+	        // Handle parsing exception
+	        return null;
+	    }
+	}
 
 
 }

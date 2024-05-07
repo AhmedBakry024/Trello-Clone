@@ -1,6 +1,7 @@
 package controller;
 
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -61,10 +62,10 @@ public class SearchController{
 	// Search by a card status in The DB
 	//---------------------------------------------------------------
 	@GET
-	@Path("/status/{keywords}")
-    public Response searchByStatus(@PathParam("keywords") String keywords) {
+	@Path("/status/{keyword}")
+    public Response searchByStatus(@PathParam("keyword") String keyword) {
 		
-        List<Card> filteredCards = searchService.searchCardsByStatus(keywords);
+        List<Card> filteredCards = searchService.searchCardsByStatus(keyword);
         return Response.ok().entity(filteredCards).build();
     }
 	
@@ -96,9 +97,92 @@ public class SearchController{
 	//---------------------------------------------------------------
 	@GET
 	@Path("/creationDate/{creationDate}")
-	public Response searchByCreationDate(@PathParam("creationDate") Date creationDate) {
-	    List<Card> filteredCards = searchService.searchCardsByCreationDate(creationDate);
-	    return Response.ok(filteredCards).build();
+	public Response searchByCreationDate(@PathParam("creationDate") String creationDateStr) {
+	    try {
+	        // Parse the date string into a Date object with the format yyyy-MM-dd
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        Date creationDate = dateFormat.parse(creationDateStr);
+
+	        // Search cards by the parsed creation date
+	        List<Card> filteredCards = searchService.searchCardsByCreationDate(creationDateStr);
+	        return Response.ok(filteredCards).build();
+	    } catch (ParseException e) {
+	        // Handle parsing exception
+	        return Response.status(Response.Status.BAD_REQUEST)
+	                .entity("Invalid date format. Please use yyyy-MM-dd format.")
+	                .build();
+	    }
 	}
+	
+	
+	
+	//---------------------------------------------------------------
+	// Search by a specific card Deedline  in The DB
+	//---------------------------------------------------------------
+	@GET
+	@Path("/deedline/{deedline}")
+	public Response searchByDeedline(@PathParam("deedline") String deedlineStr) {
+	    try {
+	        // Parse the date string into a Date object with the format yyyy-MM-dd
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        Date deedline = dateFormat.parse(deedlineStr);
+
+	        // Search cards by the parsed deedline
+	        List<Card> filteredCards = searchService.searchCardsBySpecificDeedline(deedlineStr);
+	        return Response.ok(filteredCards).build();
+	    } catch (ParseException e) {
+	        // Handle parsing exception
+	        return Response.status(Response.Status.BAD_REQUEST)
+	                .entity("Invalid date format. Please use yyyy-MM-dd format.")
+	                .build();
+	    }
+	}
+	
+	
+	//---------------------------------------------------------------
+	// Search by cards Before Deedline  in The DB
+	//---------------------------------------------------------------
+	@GET
+	@Path("/before-Deedline/{deedline}")
+	public Response searchBeforeDeedline(@PathParam("deedline") String deedlineStr) {
+	    try {
+	        // Parse the date string into a Date object with the format yyyy-MM-dd
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        Date deedline = dateFormat.parse(deedlineStr);
+
+	        // Search cards by the parsed deedline
+	        List<Card> filteredCards = searchService.searchCardsBeforeDeedline(deedlineStr);
+	        return Response.ok(filteredCards).build();
+	    } catch (ParseException e) {
+	        // Handle parsing exception
+	        return Response.status(Response.Status.BAD_REQUEST)
+	                .entity("Invalid date format. Please use yyyy-MM-dd format.")
+	                .build();
+	    }
+	}
+	
+	
+	//---------------------------------------------------------------
+		// Search by cards After Deedline  in The DB
+		//---------------------------------------------------------------
+		@GET
+		@Path("/after-Deedline/{deedline}")
+		public Response searchAfterDeedline(@PathParam("deedline") String deedlineStr) {
+		    try {
+		        // Parse the date string into a Date object with the format yyyy-MM-dd
+		        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		        Date deedline = dateFormat.parse(deedlineStr);
+
+		        // Search cards by the parsed deedline
+		        List<Card> filteredCards = searchService.searchCardsAfterDeedline(deedlineStr);
+		        return Response.ok(filteredCards).build();
+		    } catch (ParseException e) {
+		        // Handle parsing exception
+		        return Response.status(Response.Status.BAD_REQUEST)
+		                .entity("Invalid date format. Please use yyyy-MM-dd format.")
+		                .build();
+		    }
+		}
+	
 	
 }
