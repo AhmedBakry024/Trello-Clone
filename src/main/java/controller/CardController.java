@@ -34,8 +34,8 @@ public class CardController {
 	
 	@POST	
 	@Path("/addcardtolist")
-	public Response addCardToList(@QueryParam("cardId") int cardId,@QueryParam("listId") int listId) {
-		return cardService.addCardToList(cardId, listId);
+	public Response addCardToList(@QueryParam("cardId") int cardId,@QueryParam("listId") int listId,@QueryParam("userId")int userId) {
+		return cardService.addCardToList(cardId, listId,userId);
 	}
 	
 	//add description to card by CardId
