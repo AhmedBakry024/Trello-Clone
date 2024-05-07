@@ -41,15 +41,15 @@ public class CardController {
 	//add description to card by CardId
 	@POST
 	@Path("/description")
-	public Response addDescription(@QueryParam("cardId")int cardId,@QueryParam("Description")String description) {
-		return cardService.addDescription(cardId, description);
+	public Response addDescription(@QueryParam("cardId")int cardId,@QueryParam("userId")int userId,@QueryParam("Description")String description) {
+		return cardService.addDescription(cardId, userId, description);
 	}
 	
 	// add comment to card by CardId
 	@POST
     @Path("/comment")
-	public Response addComment(@QueryParam("cardId")int cardId,@QueryParam("Comment")String comment) {
-		return cardService.addComment(cardId, comment);
+	public Response addComment(@QueryParam("cardId")int cardId,@QueryParam("userId")int userId,@QueryParam("Comment")String comment) {
+		return cardService.addComment(cardId, userId,comment);
 	}
 	
 	// assigned to anyone by the CardID
@@ -61,14 +61,14 @@ public class CardController {
 
 	@GET
     @Path("/getallcomment")
-	public Response getAllComments(@QueryParam("cardId")int cardId) {
-		return cardService.getAllComments(cardId);
+	public Response getAllComments(@QueryParam("cardId")int cardId,@QueryParam("userId")int userId) {
+		return cardService.getAllComments(cardId,userId);
 	}
 	
 	@GET
 	@Path("/getcard")
-	public Response getCard(@QueryParam("cardId")int cardId) {
-		return cardService.getCard(cardId);
+	public Response getCard(@QueryParam("cardId")int cardId,@QueryParam("userId")int userId) {
+		return cardService.getCard(cardId,userId); 
 	}
 	
 }

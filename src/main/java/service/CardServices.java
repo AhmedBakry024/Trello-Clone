@@ -69,10 +69,18 @@ public class CardServices {
         }
     }
 
-    public Response addDescription(int cardId, String description) {
+    public Response addDescription(int cardId, int userId ,String description) {
         Card card;
+        User user;
+        try {
+        	user = em.find(User.class,userId);
+        }catch(Exception e) {
+        	return Response.status(Response.Status.NOT_FOUND).entity("user are not found").build();
+        }
         try {
             card = em.find(Card.class, cardId);
+            if(!check(card,user))
+            	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to add description on this card").build();
             card.setDescription(description);
             em.merge(card);
             return Response.status(Response.Status.OK).entity("Description added successfully. ").build();
@@ -81,10 +89,18 @@ public class CardServices {
         }
     }
 
-    public Response addComment(int cardId, String comment) {
+    public Response addComment(int cardId, int userId ,String comment) {
         Card card;
+        User user;
+        try {
+        	user = em.find(User.class,userId);
+        }catch(Exception e) {
+        	return Response.status(Response.Status.NOT_FOUND).entity("user are not found").build();
+        }
         try {
             card = em.find(Card.class, cardId);
+            if(!check(card,user))
+            	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to add comment on this card").build();
             card.addComment(comment);
             em.merge(card);
             return Response.status(Response.Status.OK).entity("Comment added successfully. ").build();
@@ -109,10 +125,18 @@ public class CardServices {
         }
     }
 
-    public Response getAllComments(int cardId) {
+    public Response getAllComments(int cardId,int userId) {
         Card list;
+        User user;
+        try {
+        	user = em.find(User.class,userId);
+        }catch(Exception e) {
+        	return Response.status(Response.Status.NOT_FOUND).entity("user are not found").build();
+        }
         try {
             list = em.find(Card.class, cardId);
+            if(!check(list,user))
+            	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to get all comments on this card").build();
             List<String> comments = list.getComments();
             return Response.ok(comments).build();
         } catch (Exception e) {
@@ -120,11 +144,31 @@ public class CardServices {
         }
     }
 
-    public Response getCard(int cardId) {
-        Card card = em.find(Card.class, cardId);
-        if(card == null)
+    public Response getCard(int cardId,int userId) {
+        Card card;
+        User user;
+        try {
+        	user = em.find(User.class, userId);
+        }catch(Exception e) {
         	return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
-        return Response.ok(card).build();
-
+        }
+        try{
+        	card= em.find(Card.class, cardId);
+        	if(!check(card, user))
+        		return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to get this card").build();
+        	return Response.ok(card).build();
+        }catch(Exception e) {
+        	return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
+        }
     }
+    
+	public boolean check(Card card , User user) {
+		if(card == null || user == null)
+			return false;
+		for(int i : card.getList().getBoard().getInvitedID()) {
+			if(i == user.getId())
+				return true;
+		}
+		return false;
+	}
 }
