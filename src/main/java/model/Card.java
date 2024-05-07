@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -16,6 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import messaging.JMSClient;
 
 @Entity
 @Table(name = "card")
@@ -42,8 +45,11 @@ public class Card {
     private sprint sprint;
     private String title;
 
+    @Inject
+    private JMSClient jmsClient;
     public Card() {
     	this.creationDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    	this.setStatus("To Do");
     }
 
     public Card(int cardId, String Title, String description, int assignedTo, int reporterId) {
@@ -53,6 +59,7 @@ public class Card {
         this.assignedTo = assignedTo;
         this.reporterId = reporterId;
         this.creationDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.setStatus("To Do");
     }
 
     public void addComment(String Comment) {
@@ -138,5 +145,20 @@ public class Card {
     
     public void setDeedline(String deedline) {
         this.deedline = deedline;
+    }
+    
+ // Method to check deadline and send messages
+    public void checkDeadlineAndSendMessages() {
+        LocalDate today = LocalDate.now();
+        LocalDate deedlineDate = LocalDate.parse(this.deedline, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        
+        // If today is before the deadline, send a message to the assignee
+        if (today.isBefore(deedlineDate)&& this.cardStatus!="Done") {
+            jmsClient.sendMessage("Reminder: Deadline for card '" + this.title + "' is approaching. Please complete it soon.");
+        }
+        // If today is after the deadline, send a message to the reporter
+        else if (today.isAfter(deedlineDate)&& this.cardStatus!="Done") {
+            jmsClient.sendMessage("Reminder: Deadline for card '" + this.title + "' has passed. Please review its status.");
+        }
     }
 }
