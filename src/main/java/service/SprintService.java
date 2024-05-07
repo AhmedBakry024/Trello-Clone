@@ -69,23 +69,50 @@ public class SprintService {
 	    }
 	   
 	   // **********************
-	   // to be continued 
-	   // it must get all cards that are not in the done ( has listID 3 )
-	   // till now Get all cards ID in the database 
-	   // Get all cards from the database 
-	    private List<Integer> retrieveCardIdsFromDatabase() {
-	        String queryString = "SELECT c.cardId FROM Card c";
-	        Query query = entityManager.createQuery(queryString);
+	   // retrieve Cards Id that are in the  to do or in progress  list From Database 
+	   public List<Integer> retrieveCardIdsFromDatabase() {
+		   
+		    String queryString = "SELECT c FROM Card c"; // Select the whole Card object
+		   
+		    Query query = entityManager.createQuery(queryString);
+		    	    
+		    @SuppressWarnings("unchecked")
+		   // Retrieve all Card objects
+		    List<Card> cards = query.getResultList(); 
+		    
+		    // Create a list to store listIds of retrieved cards
+		    List<Integer> listIds = new ArrayList<>();
+		    for (Card card : cards) {
+		    	
+		    	// check the listID if it is = 1 ( to-do ) or = 2 ( in progress ) and add them the the list 
+		    	// if it is = 3 ( done ), no need to add this card to the new sprint 
+		    	if ( adjustCardId(card.getListId()) == 1 || adjustCardId(card.getListId()) == 2     ) {
+		    	  
+		    		// Add listId of each eligible card to the list
+		    		listIds.add(card.getCardId()); 
+			    }
+		    }
+		    	
+		    return listIds;
+		}
+	    
+	   // get cards that are To-Do or inProgress only
+	   private int adjustCardId(int cardId) {
+		   
+		   // the while loop because each board has 3 lists with different ID 
+		   // so board 1 has 3 lists with Id 1,2,3 ( to-do , inProgress , done )
+		   // board 2 has 3 lists with Id 4,5,6  ( to-do , inProgress , done )
+		   // and we must include all boards to the new sprint
+		   while (cardId > 3) {
+			   cardId -= 3 ;
+		   }
+		   return cardId;
+		   
+		}
 
-	        @SuppressWarnings("unchecked")
-	        List<Integer> cardIds = query.getResultList();
-
-	        return cardIds;
-	    }
 	    
-	    
-	    
-	    
+	   
+	   // **********************
 	    // Get Sprint by ID 
 	    public Response getSprintById(int sprintId) {
 	        try {
