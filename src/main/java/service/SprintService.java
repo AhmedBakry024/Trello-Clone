@@ -151,47 +151,50 @@ public class SprintService {
 	            // Retrieve the list of card IDs associated with this sprint
 	            List<Integer> cardIds = sprint.getCardId();
 
-	            // Count the cards in each list
-	            Map<String, Integer> cardCountInLists = new HashMap<>();
+	            List<Card> cards = new ArrayList<>();
+	            Map<Integer, Integer> listIdCounts = new HashMap<>();
+
+	            
+	            
 	            for (Integer cardId : cardIds) {
-	                // Find the card by cardId
-	                Card card = entityManager.find(Card.class, cardId);
-
+	                Card card = entityManager.find(Card.class, cardId); // Retrieve Card by cardId
 	                if (card != null) {
-	                    // Retrieve the listId associated with the card from the database
-	                    int listId = card.getListId();
-
-	                    // Determine the list name based on listId
-	                    String listName = determineListName(listId);
-
-	                    // Update the count for the list
-	                    if (cardCountInLists.containsKey(listName)) {
-	                        cardCountInLists.put(listName, cardCountInLists.get(listName) + 1);
-	                    } else {
-	                        cardCountInLists.put(listName, 1);
-	                    }
+	                 
+	                	 int listId =adjustCardId( card.getListId() ) ;
+	                     listIdCounts.put(listId, listIdCounts.getOrDefault(listId, 0) + 1); // Increment count for the listId
+	                 
+	                	
+	                	cards.add(card); // Add retrieved Card to the list
 	                }
 	            }
 
-	            return Response.status(200).entity(cardCountInLists).build();
+	         // Calculate sum of card counts for each listId
+	            int totalCount = 0;
+	            StringBuilder responseMessage = new StringBuilder();
+	            responseMessage.append("Card counts in Sprint ").append(sprintId).append(":\n");
+	            for (Map.Entry<Integer, Integer> entry : listIdCounts.entrySet()) {
+	                int listId = entry.getKey();
+	                int count = entry.getValue();
+	                responseMessage.append("List ID ").append(listId).append(": ").append(count).append(" card(s)\n");
+	                totalCount += count;
+	            }
+	            responseMessage.append("Total count: ").append(totalCount);
+
+	            // Return response with card counts per listId and total count
+	            return Response.ok(responseMessage.toString()).build();
+	        } catch (NoResultException e) {
+	            return Response.status(404).entity("Sprint with ID " + sprintId + " not found").build();
 	        } catch (Exception e) {
-	            return Response.status(500).entity("Error retrieving card counts for sprint: " + e.getMessage()).build();
+	            return Response.status(500).entity("Internal Server Error").build();
 	        }
-	    }
+	    } 
+	            
+	            
+	            
+	           
+
+	   
 	    
-	    // Get the list name 
-	    private String determineListName(int listId) {
-	        switch (listId) {
-	            case 1:
-	                return "To-Do";
-	            case 2:
-	                return "Progress";
-	            case 3:
-	                return "Done";
-	            default:
-	                return "Not assigned";
-	        }
-	    }
 	    
 	    
 	    
