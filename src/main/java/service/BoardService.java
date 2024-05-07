@@ -34,8 +34,9 @@ public class BoardService {
 
     
     public Response createBoard(int userId, Board board) {
+    	User user;
         try {
-            User user = entityManager.find(User.class, userId);
+            user = entityManager.find(User.class, userId);
             if (user == null) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("User with ID " + userId + " not found")
@@ -51,7 +52,9 @@ public class BoardService {
             // Set the team leader of the board to the user's ID
             board.setTeamLeader(user.getId());
             board.setUser(user);
-
+            List<Integer> users = board.getInvitedID();
+            users.add(userId);
+            board.setInvitedID(users);
             entityManager.persist(board);
 
             Set<Integer> invitedIDList = user.getBoardID();

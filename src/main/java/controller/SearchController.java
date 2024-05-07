@@ -125,7 +125,7 @@ public class SearchController{
 	    try {
 	        // Parse the date string into a Date object with the format yyyy-MM-dd
 	        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	        Date deedline = dateFormat.parse(deedlineStr);
+	        Date deadline = dateFormat.parse(deedlineStr);
 
 	        // Search cards by the parsed deedline
 	        List<Card> filteredCards = searchService.searchCardsBySpecificDeedline(deedlineStr);
@@ -173,7 +173,7 @@ public class SearchController{
 		        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		        Date deedline = dateFormat.parse(deedlineStr);
 
-		        // Search cards by the parsed deedline
+		        // Search cards by the parsed deadline
 		        List<Card> filteredCards = searchService.searchCardsAfterDeedline(deedlineStr);
 		        return Response.ok(filteredCards).build();
 		    } catch (ParseException e) {

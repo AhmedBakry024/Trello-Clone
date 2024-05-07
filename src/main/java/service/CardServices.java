@@ -4,12 +4,14 @@ import java.util.List;
 
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 
 import javax.ws.rs.core.Response;
 
+import messaging.JMSClient;
 import model.Board;
 import model.Card;
 import model.ListOfCards;
@@ -20,6 +22,9 @@ public class CardServices {
 
     @PersistenceContext(unitName = "database")
     private EntityManager em;
+    
+    @Inject 
+    private JMSClient jmsClient;
 
 
     // create card
@@ -84,6 +89,7 @@ public class CardServices {
             	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed move this card").build();
             }
             list.addCard(card);
+            jmsClient.sendMessage("Card with ID " + cardId + " moved to list with ID " + listId + "\n\n\n\n\n\n\n");
             return Response.status(Response.Status.OK).entity(card).build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).entity("list are not found").build();
@@ -108,6 +114,7 @@ public class CardServices {
             	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to add description on this card").build();
             card.setDescription(description);
             em.merge(card);
+            jmsClient.sendMessage("Description added to card with ID " + cardId);
             return Response.status(Response.Status.OK).entity("Description added successfully. ").build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
@@ -132,6 +139,7 @@ public class CardServices {
             	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to add comment on this card").build();
             card.addComment(comment);
             em.merge(card);
+            jmsClient.sendMessage("User with ID " + userId + " added comment to card with ID " + cardId);
             return Response.status(Response.Status.OK).entity("Comment added successfully. ").build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
@@ -139,20 +147,40 @@ public class CardServices {
     }
 
     public Response assignedTo(int cardId, int assignedTo) {
-        Card card = em.find(Card.class, cardId);
-        if (card == null) return Response.status(Response.Status.NOT_FOUND).build();
-        else {
+    	        Card card;
+    	try {
+        card = em.find(Card.class, cardId);
+    	} catch(Exception e) {
+    		return Response.status(Response.Status.NOT_FOUND).entity("card not found").build();
+    	}
+        
             if (card.getList() == null || card.getList().getBoard() == null)
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("card are not in list or the list are not in board please check again").build();
-            if (!card.getList().getBoard().getInvitedID().contains(assignedTo))
-                return Response.status(Response.Status.NOT_FOUND).entity("User are not in the board").build();
-            User user = em.find(User.class, assignedTo);
-            if (user == null) return Response.status(Response.Status.NOT_FOUND).entity("User Not Found").build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                		.entity("card is not in list or the list is not in board please check again").build();
+            
+            List<Integer> users = card.getList().getBoard().getInvitedID();
+            if (!users.contains(assignedTo)){
+                return Response.status(Response.Status.NOT_FOUND).entity("User is not in the board").build();
+            }
+            User user;
+            try {
+            user = em.find(User.class, assignedTo);
+            } catch (Exception e) {
+			return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
+            }
+            if(!check(card,user))
+            	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you are not allowed to assign this user to this card").build();
+            
+            if (user == null) {
+            	return Response.status(Response.Status.NOT_FOUND).entity("User Not Found").build();
+            }
+            
             card.setAssignedTo(assignedTo);
             em.merge(card);
-            return Response.status(Response.Status.OK).build();
+            jmsClient.sendMessage("User with ID " + assignedTo + " assigned to card with ID " + cardId);
+            return Response.status(Response.Status.OK).entity("User assigned successfully to card").build();
         }
-    }
+    
 
     public Response getAllComments(int cardId,int userId) {
         Card list;
@@ -160,16 +188,16 @@ public class CardServices {
         try {
         	user = em.find(User.class,userId);
         	if(user == null)
-        		return Response.status(Response.Status.NOT_FOUND).entity("User are not found").build();
+        		return Response.status(Response.Status.NOT_FOUND).entity("User is not found").build();
         }catch(Exception e) {
-        	return Response.status(Response.Status.NOT_FOUND).entity("user are not found").build();
+        	return Response.status(Response.Status.NOT_FOUND).entity("user is not found").build();
         }
         try {
             list = em.find(Card.class, cardId);
             if(list == null)
             	return Response.status(Response.Status.NOT_FOUND).entity("card not Found").build();
             if(!check(list,user))
-            	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to get all comments on this card").build();
+            	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you are not allowed to get all comments on this card").build();
             List<String> comments = list.getComments();
             return Response.ok(comments).build();
         } catch (Exception e) {
