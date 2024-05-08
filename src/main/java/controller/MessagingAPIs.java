@@ -24,7 +24,9 @@ import model.Card;
 public class MessagingAPIs {
 	
 	@Inject
-	JMSClient client;
+    private JMSClient jmsClient;
+	
+	
 	@PersistenceContext(unitName = "database")
     private EntityManager em;
 	
@@ -55,16 +57,12 @@ public class MessagingAPIs {
 	                       .build();
 	    }
 	    
-	    client.checkDeadlineAndSendMessages(card);
+	    jmsClient.checkDeadlineAndSendMessages(card);
 	    
 	    return Response.ok().entity("Card Deadline Checked Successfully").build();
 	}
 
 	
-	
-	
-	@Inject
-    private JMSClient jmsClient;
 
     @GET
     @Path("/notification/{userId}")
