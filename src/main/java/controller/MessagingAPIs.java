@@ -1,37 +1,33 @@
 package controller;
 
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import messaging.JMSClient;
 import model.Card;
 
-@ApplicationPath("/api")
+@Stateless
+@Path("/messaging")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class Services extends Application {
+public class MessagingAPIs {
+	
 	@Inject
 	JMSClient client;
 	@PersistenceContext(unitName = "database")
     private EntityManager em;
+	
 	
 	@GET
 	@Path("/gett")
@@ -39,8 +35,10 @@ public class Services extends Application {
 	    int id = 123;
 	    return Response.ok(id).build();
 	}
-
 	
+	
+	
+
 	@GET
 	@Path("/check-Deadline-And-Send-Messages/{id}")
 	public Response checkDeedline(@PathParam("id") int id) {
@@ -89,5 +87,6 @@ public class Services extends Application {
         }
     }
 	
+	
+	
 }
-

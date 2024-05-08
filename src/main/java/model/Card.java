@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.annotation.Resources;
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -45,8 +46,6 @@ public class Card {
     private sprint sprint;
     private String title;
 
-    @Inject
-    private JMSClient jmsClient;
     public Card() {
     	this.creationDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     	this.setStatus("To Do");
@@ -107,6 +106,10 @@ public class Card {
         return title;
     }
     
+    public String getStatus() {
+        return cardStatus;
+    }
+    
     public String getCreationDate() {
         return creationDate;
     }
@@ -147,18 +150,4 @@ public class Card {
         this.deedline = deedline;
     }
     
- // Method to check deadline and send messages
-    public void checkDeadlineAndSendMessages() {
-        LocalDate today = LocalDate.now();
-        LocalDate deedlineDate = LocalDate.parse(this.deedline, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        
-        // If today is before the deadline, send a message to the assignee
-        if (today.isBefore(deedlineDate)&& this.cardStatus!="Done") {
-            jmsClient.sendMessage("Reminder: Deadline for card '" + this.title + "' is approaching. Please complete it soon.");
-        }
-        // If today is after the deadline, send a message to the reporter
-        else if (today.isAfter(deedlineDate)&& this.cardStatus!="Done") {
-            jmsClient.sendMessage("Reminder: Deadline for card '" + this.title + "' has passed. Please review its status.");
-        }
-    }
 }

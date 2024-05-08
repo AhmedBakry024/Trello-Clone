@@ -8,11 +8,14 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import messaging.JMSClient;
 import model.Card;
 
 @Singleton
 public class CardDeadlineScheduler {
-
+     
+	@Inject
+    private JMSClient jmsClient;
     //@PersistenceContext
     @PersistenceContext(unitName = "database")
     private EntityManager entityManager; // Inject the Entity Manager
@@ -25,7 +28,7 @@ public class CardDeadlineScheduler {
         
         // Iterate over each card and check its deadline
         for (Card card : cards) {
-            card.checkDeadlineAndSendMessages();
+        	jmsClient.checkDeadlineAndSendMessages(card);
         }
     }
     
