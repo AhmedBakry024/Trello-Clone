@@ -42,8 +42,30 @@ public class MessagingAPIs {
 	
 
 	@GET
-	@Path("/check-Deadline-And-Send-Messages/{id}")
-	public Response checkDeedline(@PathParam("id") int id) {
+	@Path("/check-Deadline-And-Send-Messages-console/{id}")
+	public Response checkDeedline_console(@PathParam("id") int id) {
+	    String jpql = "SELECT c FROM Card c WHERE c.cardId = :id";
+	    TypedQuery<Card> query = em.createQuery(jpql, Card.class);
+	    query.setParameter("id", id); 
+	    Card card = null;
+	    try {
+	        card = query.getSingleResult(); 
+	    } catch (NoResultException e) {
+	        // Entity not found for the given ID
+	        return Response.status(Response.Status.NOT_FOUND)
+	                       .entity("No card found with ID: " + id)
+	                       .build();
+	    }
+	    
+	    jmsClient.checkDeadlineAndSendMessages_console(card);
+	    
+	    return Response.ok().entity("Card Deadline Checked Successfully").build();
+	}
+
+	
+	@GET
+	@Path("/check-Deadline-And-Send-Messages-API/{id}")
+	public Response checkDeedline_API(@PathParam("id") int id) {
 	    String jpql = "SELECT c FROM Card c WHERE c.cardId = :id";
 	    TypedQuery<Card> query = em.createQuery(jpql, Card.class);
 	    query.setParameter("id", id); 
@@ -61,7 +83,6 @@ public class MessagingAPIs {
 	    
 	    return Response.ok().entity("Card Deadline Checked Successfully").build();
 	}
-
 	
 
     @GET

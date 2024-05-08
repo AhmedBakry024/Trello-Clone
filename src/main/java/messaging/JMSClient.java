@@ -31,6 +31,23 @@ public class JMSClient {
 		System.out.println("Message sent: " + message);
 	}
 	
+	public void checkDeadlineAndSendMessages_console(Card card) {
+	    LocalDate today = LocalDate.now();
+	    LocalDate deadlineDate = LocalDate.parse(card.getDeedline(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+	    // Prepare message body
+	    String messageBody = "";
+	    if (today.isBefore(deadlineDate) && !card.getStatus().equals("Done")) {
+	        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' is approaching. Please complete it soon.";
+	        
+	    } else if (today.isAfter(deadlineDate) && !card.getStatus().equals("Done")) {
+	        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' has passed. Please review its status.";
+	    }
+	    
+	    System.out.println(messageBody);
+
+	}
+	
 	 public void checkDeadlineAndSendMessages(Card card) {
 		    LocalDate today = LocalDate.now();
 		    LocalDate deadlineDate = LocalDate.parse(card.getDeedline(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -39,9 +56,12 @@ public class JMSClient {
 		    String messageBody = "";
 		    if (today.isBefore(deadlineDate) && !card.getStatus().equals("Done")) {
 		        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' is approaching. Please complete it soon.";
+		        
 		    } else if (today.isAfter(deadlineDate) && !card.getStatus().equals("Done")) {
 		        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' has passed. Please review its status.";
 		    }
+		    
+		    System.out.println(messageBody);
 
 		    // Prepare message header attribute for receiver
 		    int receiver =0;
