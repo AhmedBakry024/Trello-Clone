@@ -45,6 +45,13 @@ public class CardController {
 		return cardService.addDescription(cardId, userId, description);
 	}
 	
+	//add description to card by CardId
+	@POST
+	@Path("/modifyStatus")
+	public Response modifyStatus(@QueryParam("cardId")int cardId,@QueryParam("userId")int userId,@QueryParam("Description")String status) {
+		return cardService.modifyStatus(cardId, userId, status);
+	}
+	
 	// add comment to card by CardId
 	@POST
     @Path("/comment")

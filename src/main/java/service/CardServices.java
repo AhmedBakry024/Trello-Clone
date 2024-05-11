@@ -120,6 +120,32 @@ public class CardServices {
             return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
         }
     }
+    
+    
+    public Response modifyStatus(int cardId, int userId ,String status) {
+        Card card;
+        User user;
+        try {
+        	user = em.find(User.class,userId);
+        	if(user == null)
+        		return Response.status(Response.Status.NOT_FOUND).entity("User are not found").build();
+        }catch(Exception e) {
+        	return Response.status(Response.Status.NOT_FOUND).entity("user are not found").build();
+        }
+        try {
+            card = em.find(Card.class, cardId);
+            if(card == null)
+        		return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
+            if(!check(card,user))
+            	return Response.status(Response.Status.METHOD_NOT_ALLOWED).entity("you have not allowed to add description on this card").build();
+            card.setStatus(status);
+            em.merge(card);
+            jmsClient.sendMessage("Status modified in card with ID " + cardId);
+            return Response.status(Response.Status.OK).entity("Status modified successfully. ").build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).entity("card are not found").build();
+        }
+    }
 
     public Response addComment(int cardId, int userId ,String comment) {
         Card card;
