@@ -2,6 +2,7 @@ package messaging;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
@@ -34,12 +35,17 @@ public class JMSClient {
 	public void checkDeadlineAndSendMessages_console(Card card) {
 	    LocalDate today = LocalDate.now();
 	    LocalDate deadlineDate = LocalDate.parse(card.getDeedline(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
+        
+	    // Calculate the difference between today and the deadline
+	    long daysUntilDeadline = ChronoUnit.DAYS.between(today, deadlineDate);
+	    
 	    // Prepare message body
 	    String messageBody = "";
-	    if (today.isBefore(deadlineDate) && !card.getStatus().equals("Done")) {
+	    
+	    if (daysUntilDeadline == 1 && !card.getStatus().equals("Done")) {
+	        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' is tomorrow. Please complete it soon.";
+	    } else if (today.isBefore(deadlineDate) && !card.getStatus().equals("Done")) {
 	        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' is approaching. Please complete it soon.";
-	        
 	    } else if (today.isAfter(deadlineDate) && !card.getStatus().equals("Done")) {
 	        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' has passed. Please review its status.";
 	    }
@@ -51,12 +57,17 @@ public class JMSClient {
 	 public void checkDeadlineAndSendMessages(Card card) {
 		    LocalDate today = LocalDate.now();
 		    LocalDate deadlineDate = LocalDate.parse(card.getDeedline(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
+            
+		    // Calculate the difference between today and the deadline
+		    long daysUntilDeadline = ChronoUnit.DAYS.between(today, deadlineDate);
+		    
 		    // Prepare message body
 		    String messageBody = "";
-		    if (today.isBefore(deadlineDate) && !card.getStatus().equals("Done")) {
+		    
+		    if (daysUntilDeadline == 1 && !card.getStatus().equals("Done")) {
+		        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' is tomorrow. Please complete it soon.";
+		    } else if (today.isBefore(deadlineDate) && !card.getStatus().equals("Done")) {
 		        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' is approaching. Please complete it soon.";
-		        
 		    } else if (today.isAfter(deadlineDate) && !card.getStatus().equals("Done")) {
 		        messageBody = "Reminder: Deadline for card '" + card.getTitle() + "' has passed. Please review its status.";
 		    }
